@@ -32,8 +32,7 @@ void displayLevelMenu(int &option) {
         int yStart = 12;
         string options[4] = {"LEVEL 1", "LEVEL 2", "LEVEL 3", "LEVEL 4"};
         for (int i=0; i<4; i++) {
-            yStart += 2;
-            GoTo(0, yStart);
+            GoTo(0, yStart + 2*i);
             if (i == option) {
                 cout << ">> " + options[i];
             } else {

@@ -12,6 +12,8 @@ int main() {
     SetConsoleTitle(TEXT("Where's The Link"));
 
     // Game
+    Player player;
+
     int option = 0;
 
     while (true) {
@@ -25,7 +27,7 @@ int main() {
 
             // Auth
             case 1:
-                AuthController(option);
+                AuthController(option, player);
                 break;
 
             // Game play

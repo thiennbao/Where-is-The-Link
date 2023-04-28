@@ -45,8 +45,7 @@ void displayMainMenu(int &option) {
         int yStart = 12;
         string options[4] = {"START", "LEADERBOARD", "HOW TO PLAY", "QUIT GAME"};
         for (int i=0; i<4; i++) {
-            yStart += 2;
-            GoTo(0, yStart);
+            GoTo(0, yStart + 2*i);
             if (i == option) {
                 cout << ">> " + options[i];
             } else {
