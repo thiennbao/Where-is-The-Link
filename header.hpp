@@ -16,6 +16,7 @@ using namespace std;
 // Util
 #include "console/console.cpp"
 #include "account/account.cpp"
+#include "game/matching.cpp"
 
 // Forward Declarations
 void MenuController(int &option);
