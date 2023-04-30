@@ -3,6 +3,8 @@
 #include <conio.h>
 #include <fstream>
 #include <cstring>
+#include <stdlib.h>
+#include <time.h>
 
 #define keyUp 72
 #define keyDown 80
@@ -11,12 +13,20 @@
 #define keyEnter 13
 #define keyEsc 27
 
+#define mapWidth 6
+#define mapHeight 6
+#define charNum 4
+#define cellWidth 5
+#define cellHeight 3
+
 using namespace std;
 
 // Util
 #include "console/console.cpp"
 #include "account/account.cpp"
 #include "game/matching.cpp"
+#include "game/level.cpp"
+#include "game/play.cpp"
 
 // Forward Declarations
 void MenuController(int &option);

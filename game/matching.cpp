@@ -1,4 +1,5 @@
 
+
 string Ipath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
     if (yStart == yEnd) {
         // Horizontal
@@ -65,7 +66,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
     string Lline;
 
     // Right
-    for (int x=xStart+1; map[yStart][x] != '\0'; x++) {
+    for (int x=xStart+1; x<mapWidth; x++) {
         if (map[yStart][x] != '0') {
             break;
         }
@@ -76,7 +77,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
     }
 
     // Left
-    for (int x=xStart-1; map[yStart][x] != '\0'; x--) {
+    for (int x=xStart-1; x>=0; x--) {
         if (map[yStart][x] != '0') {
             break;
         }
@@ -87,7 +88,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
     }
 
     // Down
-    for (int y=yStart+1; map[y][xStart] != '\0'; y++) {
+    for (int y=yStart+1; y<mapHeight; y++) {
         if (map[y][xStart] != '0') {
             break;
         }
@@ -98,7 +99,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
     }
 
     // Up
-    for (int y=yStart-1; map[y][xStart] != '\0'; y--) {
+    for (int y=yStart-1; y>=0; y--) {
         if (map[y][xStart] != '0') {
             break;
         }

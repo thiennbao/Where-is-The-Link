@@ -10,7 +10,8 @@ void LevelController(int &option) {
 
         if (0 <= levelOption && levelOption <= 3) {
             // Play
-            cout << "Play level " << levelOption;
+            system("cls");
+            Play(levelOption);
         } else {
             // Back to Main menu
             option = 0;
