@@ -93,16 +93,60 @@ bool isOver(char** map) {
     return true;
 }
 
-void Play(int level) {
+bool isImpossible(char** map) {
+    for (int y=1; y<mapHeight-1; y++) {
+        for (int x=1; x<mapWidth-1; x++) {
+            if (map[y][x] != ' ') {
+                for (int i=1; i<mapHeight-1; i++) {
+                    for (int j=1; j<mapWidth-1; j++) {
+                        if (map[i][j] != ' ' && findPath(map, {x, y}, {j, i}) != "")  {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void Play(int level, Player player) {
     // Set up
     char** map = generateMap();
     coord cur = {1, 1}, start = {0, 0}, end = {0, 0};
-    
+    int score = 0, startTime = time(0);
+
+    GoTo(mapWidth*cellWidth, 4);
+    cout << "Level: " << level+1;
+    GoTo(mapWidth*cellWidth, 4);
+    cout << "Player: " << player.name;
+
     // Game loop
-    while (!isOver(map)) {
+    while (true) {
         ClearScreen();
 
-        (*Levels[level])(map, cur, start, end);
+        SetColor(0, 7);
+        GoTo(mapWidth*cellWidth, 8);
+        cout << "Score:     ";
+        GoTo(mapWidth*cellWidth + 6, 8);
+        cout << score - (time(0) - startTime) * 20;
+
+        if ((*Levels[level])(map, cur, start, end)) {
+
+            score += 100;
+
+            if (isOver(map)) {
+                break;
+            }
+
+            while (isImpossible(map)) {
+                for (int y=1; y<mapHeight-1; y++) {
+                    for (int x=1; x<mapWidth-1; x++) {
+                        swap(map[y][x], map[rand()%(mapHeight-2) + 1][rand()%(mapWidth-2) + 1]);
+                    }
+                }
+            }
+        }
 
         move(map, cur, start, end);
     }
@@ -115,6 +159,26 @@ void Play(int level) {
 
     // After game screen
     system("cls");
+    GoTo(0, 12);
     cout << "YOU WIN !!!";
-    getch();
+    GoTo(0, 14);
+    cout << "Your score in this level: " << score - (time(0) - startTime) * 20;
+
+    GoTo(0, 20);
+    cout << "Back to Level Menu (A) - Play again (Space) - Next level (D)";
+    char ch;
+    while (true) {
+        ch = getch();
+        if (ch == keyRight || ch == 'd') {
+            if (level < 3) {
+                Play(level+1, player);
+            }
+            break;
+        } else if (ch == ' ') {
+            Play(level, player);
+            break;
+        } else if (ch == keyLeft || ch == 'a') {
+            break;
+        }
+    }
 }

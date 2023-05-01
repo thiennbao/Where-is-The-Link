@@ -32,7 +32,7 @@ int main() {
 
             // Game play
             case 2:
-                LevelController(option);
+                LevelController(option, player);
                 break;
 
             // Quit

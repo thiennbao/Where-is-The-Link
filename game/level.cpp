@@ -42,14 +42,65 @@ void drawCell(char** map, coord co, coord cur, coord pick) {
     }
 }
 
+void drawLine(char cur, char next, coord &start) {
+    if (cur == 'a' || cur == 'd') {
+        // Horizontal line
+        for (int i=0; i<cellWidth-1; i++) {
+            // Left if A and vice versa
+            start.x += (cur == 'a' ? -1 : 1);
+            GoTo(start.x, start.y);
+            cout << char(196);
+        }
+        start.x += (cur == 'a' ? -1 : 1);
+    } else if (cur == 'w' || cur == 's') {
+        // Vertical line
+        for (int i=0; i<cellHeight-1; i++) {
+            // Up if W and vice versa
+            start.y += (cur == 'w' ? -1 : 1);
+            GoTo(start.x, start.y);
+            cout << char(179);
+        }
+        start.y += (cur == 'w' ? -1 : 1);
+    }
+    // Last char
+    GoTo(start.x, start.y);
+    if (cur == next) {
+        // Line
+        if (cur == 'a' || cur == 'd') {
+            cout << char(196);
+        } else if (cur == 'w' || cur == 's') {
+            cout << char(179);
+        }
+    } else {
+        // Corner
+        if ((cur == 'a' && next == 'w') || (cur == 's' && next == 'd')) {
+            cout << char(192);
+        } else if ((cur == 'a' && next == 's') || (cur == 'w' && next == 'd')) {
+            cout << char(218);
+        } else if ((cur == 'd' && next == 'w') || (cur == 's' && next == 'a')) {
+            cout << char(217);
+        } else if ((cur == 'd' && next == 's') || (cur == 'w' && next == 'a')) {
+            cout << char(191);
+        }
+    }
+}
+void drawPath(string path, coord start) {
+    coord co = {start.x*cellWidth + cellWidth/2, start.y*cellHeight + cellHeight/2};
+    for (int i=0; i<path.size(); i++) {
+        drawLine(path[i], path[i+1], co);
+    }
+}
+
 
 // Level's feature
 
-void Normal(char** map, coord cur, coord &start, coord &end) {
+bool Normal(char** map, coord cur, coord &start, coord &end) {
 
     // Map handle
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start);
+        Sleep(500);
         map[start.y][start.x] = map[end.y][end.x] = ' ';
     }
 
@@ -64,9 +115,11 @@ void Normal(char** map, coord cur, coord &start, coord &end) {
             drawCell(map, {x, y}, cur, start);
         }
     }
+
+    return !(path == "");
 }
 
-void Falldown(char** map, coord cur, coord &start, coord &end) {
+bool Falldown(char** map, coord cur, coord &start, coord &end) {
 
     // Map handle
     string path = findPath(map, start, end);
@@ -96,9 +149,11 @@ void Falldown(char** map, coord cur, coord &start, coord &end) {
             drawCell(map, {x, y}, cur, start);
         }
     }
+
+    return !(path == "");
 }
 
-void Messup(char** map, coord cur, coord &start, coord &end) {
+bool Messup(char** map, coord cur, coord &start, coord &end) {
 
     // Map handle
     string path = findPath(map, start, end);
@@ -124,9 +179,11 @@ void Messup(char** map, coord cur, coord &start, coord &end) {
             drawCell(map, {x, y}, cur, start);
         }
     }
+
+    return !(path == "");
 }
 
-void Dark(char** map, coord cur, coord &start, coord &end) {
+bool Dark(char** map, coord cur, coord &start, coord &end) {
     // Map handle
     string path = findPath(map, start, end);
     if (path != "") {
@@ -153,6 +210,8 @@ void Dark(char** map, coord cur, coord &start, coord &end) {
             }
         }
     }
+
+    return path != "";
 }
 
-void (*Levels[4])(char** map, coord cur, coord &start, coord &end) = {&Normal, &Falldown, &Messup, &Dark};
+bool (*Levels[4])(char** map, coord cur, coord &start, coord &end) = {&Normal, &Falldown, &Messup, &Dark};

@@ -1,5 +1,5 @@
 
-void LevelController(int &option) {
+void LevelController(int &option, Player player) {
 
     int levelOption = 0;
 
@@ -11,7 +11,7 @@ void LevelController(int &option) {
         if (0 <= levelOption && levelOption <= 3) {
             // Play
             system("cls");
-            Play(levelOption);
+            Play(levelOption, player);
         } else {
             // Back to Main menu
             option = 0;
