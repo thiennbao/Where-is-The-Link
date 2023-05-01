@@ -1,132 +1,135 @@
 
+struct coord {
+    int x, y;
+};
 
-string Ipath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
-    if (yStart == yEnd) {
+string Ipath(char** map, coord start, coord end) {
+    if (start.y == end.y) {
         // Horizontal
-        if (xStart < xEnd) {
+        if (start.x < end.x) {
             // Right
-            for (int x=xStart+1; x<xEnd; x++) {
-                if (map[yStart][x] != ' ') {
+            for (int x=start.x+1; x<end.x; x++) {
+                if (map[start.y][x] != ' ') {
                     return "";
                 }
             }
-            return string(xEnd - xStart, 'd');
+            return string(end.x - start.x, 'd');
         } else {
             // Left
-            for (int x=xStart-1; x>xEnd; x--) {
-                if (map[yStart][x] != ' ') {
+            for (int x=start.x-1; x>end.x; x--) {
+                if (map[start.y][x] != ' ') {
                     return "";
                 }
             }
-            return string(xStart - xEnd, 'a');
+            return string(start.x - end.x, 'a');
         }
-    } else if (xStart == xEnd) {
+    } else if (start.x == end.x) {
         // Vertical
-        if (yStart < yEnd) {
+        if (start.y < end.y) {
             // Down
-            for (int y=yStart+1; y<yEnd; y++) {
-                if (map[y][xStart] != ' ') {
+            for (int y=start.y+1; y<end.y; y++) {
+                if (map[y][start.x] != ' ') {
                     return "";
                 }
             }
-            return string(yEnd - yStart, 's');
+            return string(end.y - start.y, 's');
         } else {
             // Up
-            for (int y=yStart-1; y>yEnd; y--) {
-                if (map[y][xStart] != ' ') {
+            for (int y=start.y-1; y>end.y; y--) {
+                if (map[y][start.x] != ' ') {
                     return "";
                 }
             }
-            return string(yStart - yEnd, 'w');
+            return string(start.y - end.y, 'w');
         }
     }
 
     return "";
 }
 
-string IIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
+string IIpath(char** map, coord start, coord end) {
     string Ihor, Iver;
 
     // Horizontal then Vertical
-    Ihor = Ipath(map, xStart, yStart, xEnd, yStart);
-    Iver = Ipath(map, xEnd, yStart, xEnd, yEnd);
-    if (Ihor != "" && Iver != "" && map[yStart][xEnd] == ' ') {
+    Ihor = Ipath(map, {start.x, start.y}, {end.x, start.y});
+    Iver = Ipath(map, {end.x, start.y}, {end.x, end.y});
+    if (Ihor != "" && Iver != "" && map[start.y][end.x] == ' ') {
         return Ihor + Iver;
     }
 
     // Vertical then Horizontal
-    Iver = Ipath(map, xStart, yStart, xStart, yEnd);
-    Ihor = Ipath(map, xStart, yEnd, xEnd, yEnd);
-    if (Ihor != "" && Iver != "" && map[yEnd][xStart] == ' ') {
+    Iver = Ipath(map, {start.x, start.y}, {start.x, end.y});
+    Ihor = Ipath(map, {start.x, end.y}, {end.x, end.y});
+    if (Ihor != "" && Iver != "" && map[end.y][start.x] == ' ') {
         return Iver + Ihor;
     }
 
     return "";
 }
 
-string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
+string IIIpath(char** map, coord start, coord end) {
     string Lline;
 
     // Right
-    for (int x=xStart+1; x<mapWidth; x++) {
-        if (map[yStart][x] != ' ') {
+    for (int x=start.x+1; x<mapWidth; x++) {
+        if (map[start.y][x] != ' ') {
             break;
         }
-        Lline = IIpath(map, x, yStart, xEnd, yEnd);
+        Lline = IIpath(map, {x, start.y}, {end.x, end.y});
         if (Lline != "") {
-            return string(x - xStart, 'd') + Lline;
+            return string(x - start.x, 'd') + Lline;
         }
     }
 
     // Left
-    for (int x=xStart-1; x>=0; x--) {
-        if (map[yStart][x] != ' ') {
+    for (int x=start.x-1; x>=0; x--) {
+        if (map[start.y][x] != ' ') {
             break;
         }
-        Lline = IIpath(map, x, yStart, xEnd, yEnd);
+        Lline = IIpath(map, {x, start.y}, {end.x, end.y});
         if (Lline != "") {
-            return string(xStart - x, 'a') + Lline;
+            return string(start.x - x, 'a') + Lline;
         }
     }
 
     // Down
-    for (int y=yStart+1; y<mapHeight; y++) {
-        if (map[y][xStart] != ' ') {
+    for (int y=start.y+1; y<mapHeight; y++) {
+        if (map[y][start.x] != ' ') {
             break;
         }
-        Lline = IIpath(map, xStart, y, xEnd, yEnd);
+        Lline = IIpath(map, {start.x, y}, {end.x, end.y});
         if (Lline != "") {
-            return string(y - yStart, 's')+ Lline;
+            return string(y - start.y, 's')+ Lline;
         }
     }
 
     // Up
-    for (int y=yStart-1; y>=0; y--) {
-        if (map[y][xStart] != ' ') {
+    for (int y=start.y-1; y>=0; y--) {
+        if (map[y][start.x] != ' ') {
             break;
         }
-        Lline = IIpath(map, xStart, y, xEnd, yEnd);
+        Lline = IIpath(map, {start.x, y}, {end.x, end.y});
         if (Lline != "") {
-            return string(yStart - y, 'w') + Lline;
+            return string(start.y - y, 'w') + Lline;
         }
     }
 
     return "";
 }
 
-string findPath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
-    if (map[yStart][xStart] == map[yEnd][xEnd] && (xStart != xEnd || yStart != yEnd)) {
+string findPath(char** map, coord start, coord end) {
+    if (map[start.y][start.x] == map[end.y][end.x] && (start.x != end.x || start.y != end.y)) {
         string path;
         
-        path = Ipath(map, xStart, yStart, xEnd, yEnd);
+        path = Ipath(map, {start.x, start.y}, {end.x, end.y});
         if (path != "") {
             return path;
         }
-        path = IIpath(map, xStart, yStart, xEnd, yEnd);
+        path = IIpath(map, {start.x, start.y}, {end.x, end.y});
         if (path != "") {
             return path;
         }
-        path = IIIpath(map, xStart, yStart, xEnd, yEnd);
+        path = IIIpath(map, {start.x, start.y}, {end.x, end.y});
         if (path != "") {
             return path;
         }

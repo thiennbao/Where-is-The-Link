@@ -43,42 +43,41 @@ char** generateMap() {
     return map;
 }
 
-void move(char** map, int &xCur, int &yCur, int &xStart, int &yStart, int &xEnd, int &yEnd, bool &swch) {
+void move(char** map, coord &cur, coord &start, coord &end) {
     char ch = getch();
     if (ch == keyRight || ch == 'd') {
-        if (xCur == mapWidth - 2) {
-            xCur = 1;
+        if (cur.x == mapWidth - 2) {
+            cur.x = 1;
         }  else {
-            xCur ++;
+            cur.x ++;
         }
     } else if (ch == keyLeft || ch == 'a') {
-        if (xCur == 1) {
-            xCur = mapWidth - 2;
+        if (cur.x == 1) {
+            cur.x = mapWidth - 2;
         } else {
-            xCur --;
+            cur.x --;
         }
     } else if (ch == keyDown || ch == 's') {
-        if (yCur == mapHeight - 2) {
-            yCur = 1;
+        if (cur.y == mapHeight - 2) {
+            cur.y = 1;
         }  else {
-            yCur ++;
+            cur.y ++;
         }
     } else if (ch == keyUp || ch == 'w') {
-        if (yCur == 1) {
-            yCur = mapHeight - 2;
+        if (cur.y == 1) {
+            cur.y = mapHeight - 2;
         } else {
-            yCur --;
+            cur.y --;
         }
     } else if (ch == keyEnter || ch == ' ') {
-        if (map[yCur][xCur] != ' ') {
-            if (swch) {
-                xStart = xCur;
-                yStart = yCur;
+        if (map[cur.y][cur.x] != ' ') {
+            if (start.x == 0) {
+                start.x = cur.x;
+                start.y = cur.y;
             } else {
-                xEnd = xCur;
-                yEnd = yCur;
+                end.x = cur.x;
+                end.y = cur.y;
             }
-            swch = !swch;
         }
     }
 }
@@ -97,32 +96,18 @@ bool isOver(char** map) {
 void Play(int level) {
     // Set up
     char** map = generateMap();
-    int xCur = 1, yCur = 1;
-    int xStart = 0, yStart = 0, xEnd = 0, yEnd = 0;
-    bool swch = true;
-    string path;
+    coord cur = {1, 1}, start = {0, 0}, end = {0, 0};
     
     // Game loop
-    while (true) {
+    while (!isOver(map)) {
         ClearScreen();
 
-        Normal(map, xCur, yCur, xStart, yStart);
+        (*Levels[level])(map, cur, start, end);
 
-        move(map, xCur, yCur, xStart, yStart, xEnd, yEnd, swch);
-        
-        path = findPath(map, xStart, yStart, xEnd, yEnd);
-        if (path != "") {
-            map[yStart][xStart] = map[yEnd][xEnd] = ' ';
-        }
-        if (swch) {
-            xStart = yStart = xEnd = yEnd = 0;
-        }
-
-        if (isOver(map)) {
-            break;
-        }
+        move(map, cur, start, end);
     }
 
+    // After game
     for (int i=0; i<mapHeight; i++) {
         delete [] map[i];
     }
