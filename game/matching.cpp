@@ -6,7 +6,7 @@ string Ipath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
         if (xStart < xEnd) {
             // Right
             for (int x=xStart+1; x<xEnd; x++) {
-                if (map[yStart][x] != '0') {
+                if (map[yStart][x] != ' ') {
                     return "";
                 }
             }
@@ -14,7 +14,7 @@ string Ipath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
         } else {
             // Left
             for (int x=xStart-1; x>xEnd; x--) {
-                if (map[yStart][x] != '0') {
+                if (map[yStart][x] != ' ') {
                     return "";
                 }
             }
@@ -25,7 +25,7 @@ string Ipath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
         if (yStart < yEnd) {
             // Down
             for (int y=yStart+1; y<yEnd; y++) {
-                if (map[y][xStart] != '0') {
+                if (map[y][xStart] != ' ') {
                     return "";
                 }
             }
@@ -33,13 +33,15 @@ string Ipath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
         } else {
             // Up
             for (int y=yStart-1; y>yEnd; y--) {
-                if (map[y][xStart] != '0') {
+                if (map[y][xStart] != ' ') {
                     return "";
                 }
             }
             return string(yStart - yEnd, 'w');
         }
     }
+
+    return "";
 }
 
 string IIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
@@ -48,14 +50,14 @@ string IIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
     // Horizontal then Vertical
     Ihor = Ipath(map, xStart, yStart, xEnd, yStart);
     Iver = Ipath(map, xEnd, yStart, xEnd, yEnd);
-    if (Ihor != "" && Iver != "" && map[yStart][xEnd] == '0') {
+    if (Ihor != "" && Iver != "" && map[yStart][xEnd] == ' ') {
         return Ihor + Iver;
     }
 
     // Vertical then Horizontal
     Iver = Ipath(map, xStart, yStart, xStart, yEnd);
     Ihor = Ipath(map, xStart, yEnd, xEnd, yEnd);
-    if (Ihor != "" && Iver != "" && map[yEnd][xStart] == '0') {
+    if (Ihor != "" && Iver != "" && map[yEnd][xStart] == ' ') {
         return Iver + Ihor;
     }
 
@@ -67,7 +69,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
 
     // Right
     for (int x=xStart+1; x<mapWidth; x++) {
-        if (map[yStart][x] != '0') {
+        if (map[yStart][x] != ' ') {
             break;
         }
         Lline = IIpath(map, x, yStart, xEnd, yEnd);
@@ -78,7 +80,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
 
     // Left
     for (int x=xStart-1; x>=0; x--) {
-        if (map[yStart][x] != '0') {
+        if (map[yStart][x] != ' ') {
             break;
         }
         Lline = IIpath(map, x, yStart, xEnd, yEnd);
@@ -89,7 +91,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
 
     // Down
     for (int y=yStart+1; y<mapHeight; y++) {
-        if (map[y][xStart] != '0') {
+        if (map[y][xStart] != ' ') {
             break;
         }
         Lline = IIpath(map, xStart, y, xEnd, yEnd);
@@ -100,7 +102,7 @@ string IIIpath(char** map, int xStart, int yStart, int xEnd, int yEnd) {
 
     // Up
     for (int y=yStart-1; y>=0; y--) {
-        if (map[y][xStart] != '0') {
+        if (map[y][xStart] != ' ') {
             break;
         }
         Lline = IIpath(map, xStart, y, xEnd, yEnd);
