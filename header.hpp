@@ -38,8 +38,8 @@ void loginForm(Player &player);
 void signupForm(Player &player);
 void displayAfterAuthMenu(int &option);
 
-void LevelController(int &option);
-void displayLevelMenu(int &option);
+void LevelController(int &option, Player &player);
+void displayLevelMenu(int &option, int level);
 
 // Code
 #include "controllers/menuController.cpp"

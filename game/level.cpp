@@ -100,7 +100,7 @@ bool Normal(char** map, coord cur, coord &start, coord &end) {
     string path = findPath(map, start, end);
     if (path != "") {
         drawPath(path, start);
-        Sleep(500);
+        Sleep(100);
         map[start.y][start.x] = map[end.y][end.x] = ' ';
     }
 
@@ -124,6 +124,8 @@ bool Falldown(char** map, coord cur, coord &start, coord &end) {
     // Map handle
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start);
+        Sleep(100);
         map[start.y][start.x] = map[end.y][end.x] = ' ';
 
         // Fall down
@@ -158,6 +160,8 @@ bool Messup(char** map, coord cur, coord &start, coord &end) {
     // Map handle
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start);
+        Sleep(100);
         map[start.y][start.x] = map[end.y][end.x] = ' ';
 
         // Messup
@@ -187,6 +191,8 @@ bool Dark(char** map, coord cur, coord &start, coord &end) {
     // Map handle
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start);
+        Sleep(100);
         map[start.y][start.x] = map[end.y][end.x] = ' ';
     }
 

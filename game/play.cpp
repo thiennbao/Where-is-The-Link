@@ -1,8 +1,18 @@
 
-char** generateMap() {
+char** generateMap(char saving[mapWidth*mapHeight]) {
     char** map = new char* [mapHeight];
     for (int i=0; i<mapHeight; i++) {
         map[i] = new char [mapWidth];
+    }
+
+    // Load saving
+    if (strcmp(saving, "") != 0) {
+        for (int y=0; y<mapHeight; y++) {
+            for (int x=0; x<mapWidth; x++) {
+                map[y][x] = saving[y*mapWidth + x];
+            }
+        }
+        return map;
     }
 
     // Set all to Space
@@ -43,7 +53,7 @@ char** generateMap() {
     return map;
 }
 
-void move(char** map, coord &cur, coord &start, coord &end) {
+bool move(char** map, coord &cur, coord &start, coord &end) {
     char ch = getch();
     if (ch == keyRight || ch == 'd') {
         if (cur.x == mapWidth - 2) {
@@ -79,7 +89,25 @@ void move(char** map, coord &cur, coord &start, coord &end) {
                 end.y = cur.y;
             }
         }
+    } 
+    else if (ch == keyEsc) {
+        if (getch() == keyEsc) {
+            system("cls");
+            SetColor(0, 7);
+            GoTo(0, 12);
+            cout << "Save a quit (A) - Continue (D)";
+            while (true) {   
+                ch = getch();
+                if (ch == keyRight || ch == 'd') {
+                    system("cls");
+                    return true;
+                } else if (ch == keyLeft || ch == 'a') {
+                    return false;
+                }
+            }
+        }
     }
+    return true;
 }
 
 bool isOver(char** map) {
@@ -110,16 +138,16 @@ bool isImpossible(char** map) {
     return true;
 }
 
-void Play(int level, Player player) {
+void Play(int level, Player &player) {
     // Set up
-    char** map = generateMap();
-    coord cur = {1, 1}, start = {0, 0}, end = {0, 0};
-    int score = 0, startTime = time(0);
+    char** map = generateMap(player.saving[level].map);
+    coord cur = {player.saving[level].x, player.saving[level].y}, start = {0, 0}, end = {0, 0};
+    int score = player.saving[level].score, startTime = time(0);
 
     GoTo(mapWidth*cellWidth, 4);
     cout << "Level: " << level+1;
     GoTo(mapWidth*cellWidth, 4);
-    cout << "Player: " << player.name;
+    cout << "Player: " << (strcmp(player.name, "") == 0 ? "Guest" : player.name);
 
     // Game loop
     while (true) {
@@ -148,33 +176,70 @@ void Play(int level, Player player) {
             }
         }
 
-        move(map, cur, start, end);
+        if (!move(map, cur, start, end)) {
+            // Saving
+            player.saving[level].x = cur.x;
+            player.saving[level].y = cur.y;
+            player.saving[level].score = score - (time(0) - startTime) * 20;
+            for (int y=0; y<mapHeight; y++) {
+                for (int x=0; x<mapWidth; x++) {
+                    player.saving[level].map[y*mapWidth + x] = map[y][x];
+                }
+            }
+            update(player, level);
+
+            for (int i=0; i<mapHeight; i++) {
+                delete [] map[i];
+            }
+            delete [] map;
+            return;
+        };
     }
 
     // After game
+    score -= (time(0) - startTime) * 20;
     for (int i=0; i<mapHeight; i++) {
         delete [] map[i];
     }
     delete [] map;
 
+    Saving empty;
+    player.saving[level] = empty;
+
+    if (level == player.level && level < 3) {
+        player.level ++;
+    }
+    if (score > player.score[level]) {
+        player.score[level] = score;
+    }
+    if (strcmp(player.name, "") != 0) {
+        update(player, level);
+    }
+
     // After game screen
     system("cls");
+    SetColor(0, 7);
     GoTo(0, 12);
     cout << "YOU WIN !!!";
     GoTo(0, 14);
-    cout << "Your score in this level: " << score - (time(0) - startTime) * 20;
+    cout << "Your score in this level: " << score;
+    GoTo(0, 16);
+    cout << "Your best score in this level: " << player.score[level];
+    GoTo(0, 18);
+    cout << "Your total score: " << player.score[0] + player.score[1] + player.score[2] + player.score[3];
 
     GoTo(0, 20);
     cout << "Back to Level Menu (A) - Play again (Space) - Next level (D)";
-    char ch;
     while (true) {
-        ch = getch();
+        char ch = getch();
         if (ch == keyRight || ch == 'd') {
+            system("cls");
             if (level < 3) {
                 Play(level+1, player);
             }
             break;
         } else if (ch == ' ') {
+            system("cls");
             Play(level, player);
             break;
         } else if (ch == keyLeft || ch == 'a') {

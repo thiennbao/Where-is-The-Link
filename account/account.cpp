@@ -1,9 +1,15 @@
 
+struct Saving {
+    int x = 1, y = 1, score = 0;
+    char map[mapWidth*mapHeight] = "";
+};
 struct Player {
     char name[50] = "";
     char pass[50] = "";
 
     int level = 0;
+    int score[4] = {0, 0, 0, 0};
+    Saving saving[4];
 };
 
 void login(Player &player, string name, string pass) {
@@ -60,14 +66,63 @@ void signup(Player &player, string name, string pass) {
     ifs.close();
 
     // Add player
-    strcpy(player.name, name.c_str());
-    strcpy(player.pass, pass.c_str());
+    Player newPlayer;
+    strcpy(newPlayer.name, name.c_str());
+    strcpy(newPlayer.pass, pass.c_str());
 
     ofstream ofs("resources/player.dat", ios::binary | ios::app);
-    ofs.write((char*) &player, sizeof(Player));
+    ofs.write((char*) &newPlayer, sizeof(Player));
     ofs.close();
+
+    player = newPlayer;
 }
 
 void logout(Player &player) {
-    strcpy(player.name, "");
+    Player emptyPlayer;
+    player = emptyPlayer;
+}
+
+void update(Player player, int level) {
+
+    ifstream ifs("resources/player.dat", ios::binary);
+    if (!ifs.is_open()) {
+        return;
+    }
+
+    // Get player list
+    ifs.seekg(0, ios::end);
+    const int playerNum = ifs.tellg() / sizeof(Player);
+    ifs.seekg(0, ios::beg);
+    Player playerList[playerNum];
+    for (int i=0; i<playerNum; i++) {
+        ifs.read((char *) &playerList[i], sizeof(Player));
+    }
+    ifs.close();
+
+    // Update
+    for (int i=0; i<playerNum; i++) {
+        if (strcmp(player.name, playerList[i].name) == 0) {
+            // Saving
+            playerList[i].saving[level] = player.saving[level];
+            // Update
+            if (strcmp(player.saving[player.level].map, "") == 0) {
+                if (player.level > playerList[i].level) {
+                    playerList[i].level = player.level;
+                }
+                for (int lv=0; lv<4; lv++) {
+                    if (player.score[lv] > playerList[i].score[lv]) {
+                        playerList[i].score[lv] = player.score[lv];
+                    }
+                }
+            }
+            break;
+        }
+    }
+
+    // Write to file
+    ofstream ofs("resources/player.dat", ios::binary);
+    for (int i=0; i<playerNum; i++) {
+        ofs.write((char *) &playerList[i], sizeof(Player));
+    }
+    ofs.close();
 }

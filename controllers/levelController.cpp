@@ -1,12 +1,12 @@
 
-void LevelController(int &option, Player player) {
+void LevelController(int &option, Player &player) {
 
     int levelOption = 0;
 
     while (true) {
 
         system("cls");
-        displayLevelMenu(levelOption);
+        displayLevelMenu(levelOption, player.level);
 
         if (0 <= levelOption && levelOption <= 3) {
             // Play
@@ -20,7 +20,7 @@ void LevelController(int &option, Player player) {
     }
 }
 
-void displayLevelMenu(int &option) {
+void displayLevelMenu(int &option, int level) {
     char ch;
     while (true) {
         
@@ -38,6 +38,9 @@ void displayLevelMenu(int &option) {
                 cout << ">> " + options[i];
             } else {
                 cout << "   " + options[i];
+                if (i > level) {
+                    cout << " LOCKED";
+                }
             }
         }
 
@@ -46,13 +49,13 @@ void displayLevelMenu(int &option) {
         if (ch == keyUp || ch == 'w') {
             // Up
             if (option == 0) {
-                option = 3;
+                option = level;
             } else {
                 option--;
             }
         } else if (ch == keyDown || ch == 's') {
             // Down
-            if (option == 3) {
+            if (option == level) {
                 option = 0;
             } else {
                 option++;

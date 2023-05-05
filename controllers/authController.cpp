@@ -288,13 +288,13 @@ void displayAfterAuthMenu(int &option) {
         if (ch == keyUp || ch == 'w') {
             // Up
             if (option == 0) {
-                option = 2;
+                option = 1;
             } else {
                 option--;
             }
         } else if (ch == keyDown || ch == 's') {
             // Down
-            if (option == 2) {
+            if (option == 1) {
                 option = 0;
             } else {
                 option++;
