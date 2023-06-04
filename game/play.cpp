@@ -110,20 +110,17 @@ bool act(char** map, char** background, coord &cur, coord &start, coord &end) {
             }
         }
     } else if (ch == keyEsc) {
-        // Issue here
-        if (getch() == keyEsc) {
-            system("cls");
-            SetColor('M', 'O');
-            GoTo(0, 12);
-            cout << "Save a quit (A) - Continue (D)";
-            while (true) {   
-                ch = getch();
-                if (ch == keyRight || ch == 'd') {
-                    system("cls");
-                    return true;
-                } else if (ch == keyLeft || ch == 'a') {
-                    return false;
-                }
+        system("cls");
+        SetColor('M', 'O');
+        GoTo(0, 12);
+        cout << "Save a quit (A) - Continue (D)";
+        while (true) {   
+            ch = getch();
+            if (ch == keyRight || ch == 'd') {
+                system("cls");
+                return true;
+            } else if (ch == keyLeft || ch == 'a') {
+                return false;
             }
         }
     }
@@ -179,7 +176,7 @@ void Play(int level, Player &player) {
     while (true) {
 
         // Reset screen
-        ClearScreen();
+        GoTo(0, 0);
         SetColor('M', 'O');
         GoTo(mapWidth*cellWidth, 8);
         cout << "Score:     ";

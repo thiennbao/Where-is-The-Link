@@ -1,49 +1,14 @@
 
-void MenuController(int &option) {
+void displayMainMenu(string &page, Player player) {
 
-    int menuOption = 0;
+    GoTo(0, yStart - 4);
+    cout << "MAIN MENU";
+    string options[4] = {"START", "LEADERBOARD", "HOW TO PLAY", "QUIT GAME"};
 
+    int option = 0;
     while (true) {
 
-        system("cls");
-        displayMainMenu(menuOption);
-
-        if (menuOption == 0) {
-            // Auth menu
-            option = 1;
-            break;
-
-        } else if (menuOption == 1) {
-            // Leader board
-            system("cls");
-            cout << "Leader board";
-
-        } else if (menuOption == 2) {
-            // Help
-            system("cls");
-            cout << "How to play";
-
-        } else {
-            // Quit the game
-            option = 3;
-            break;
-            
-        }
-    }
-}
-
-void displayMainMenu(int &option) {
-    char ch;
-    while (true) {
-        
-        // Display the menu
-        ClearScreen();
-        // DrawLogo();
-
-        cout << "MAIN MENU";
-
-        int yStart = 12;
-        string options[4] = {"START", "LEADERBOARD", "HOW TO PLAY", "QUIT GAME"};
+        // Page
         for (int i=0; i<4; i++) {
             GoTo(0, yStart + 2*i);
             if (i == option) {
@@ -54,23 +19,52 @@ void displayMainMenu(int &option) {
         }
 
         // Move
-        ch = getch();
+        char ch = getch();
         if (ch == keyUp || ch == 'w') {
             // Up
-            if (option == 0) {
-                option = 3;
-            } else {
-                option--;
-            }
+            option = (option == 0) ? 3 : option - 1;
         } else if (ch == keyDown || ch == 's') {
             // Down
-            if (option == 3) {
-                option = 0;
-            } else {
-                option++;
-            }
+            option = (option == 3) ? 0 : option + 1;
         } else if (ch == keyRight || ch == 'd' || ch == ' ' || ch == keyEnter) {
             // Next
+            if (option == 0) {
+                page = (strcmp(player.name, "") == 0) ? "auth" : "after auth";
+            } else if (option == 1) {
+                page = "leaderboard";
+            } else if (option == 2) {
+                page = "help";
+            } else {
+                page = "quit";
+            }
+            break;
+        }
+    }
+}
+
+void displayLeaderBoard(string &page) {
+    GoTo(0, yStart - 4);
+    cout << "LEADER BOARD";
+
+    while (true) {
+        char ch = getch();
+        if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
+            // Back to Main menu
+            page = "menu";
+            break;
+        }
+    }
+}
+
+void displayHelp(string &page) {
+    GoTo(0, yStart - 4);
+    cout << "HOW TO PLAY";
+
+    while (true) {
+        char ch = getch();
+        if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
+            // Back to Main menu
+            page = "menu";
             break;
         }
     }

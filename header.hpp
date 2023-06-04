@@ -19,30 +19,10 @@
 #define cellWidth 5
 #define cellHeight 3
 
+#define yStart 12
+
 using namespace std;
 
-// Util
-#include "console/console.cpp"
-#include "account/account.cpp"
-#include "game/matching.cpp"
-#include "game/interface.cpp"
-#include "game/level.cpp"
-#include "game/play.cpp"
-
-// Forward Declarations
-void MenuController(int &option);
-void displayMainMenu(int &option);
-
-void AuthController(int &option, Player &player);
-void displayAuthMenu(int &option);
-void loginForm(Player &player);
-void signupForm(Player &player);
-void displayAfterAuthMenu(int &option);
-
-void LevelController(int &option, Player &player);
-void displayLevelMenu(int &option, int level);
-
-// Code
-#include "controllers/menuController.cpp"
-#include "controllers/authController.cpp"
-#include "controllers/levelController.cpp"
+#include "util/util.hpp"
+#include "game/game.hpp"
+#include "controllers/controllers.hpp"

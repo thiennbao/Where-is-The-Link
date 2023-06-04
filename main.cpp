@@ -3,41 +3,37 @@
 int main() {
 
     // Console settings
-    SetWindowSize(120, 30);
-    SetScreenBufferSize(120, 30);
-    DisableResizeWindow();
-    DisableCtrlButton(false, true, false);
-    DisableSelection();
     ShowCur(false);
     SetConsoleTitle(TEXT("Where's The Link"));
 
     // Game
     Player player;
+    int level = 0;
 
-    int option = 0;
-
+    string page = "menu";
     while (true) {
-
-        switch (option) {
-
-            // Menu
-            case 0:
-                MenuController(option);
-                break;
-
-            // Auth
-            case 1:
-                AuthController(option, player);
-                break;
-
-            // Game play
-            case 2:
-                LevelController(option, player);
-                break;
-
-            // Quit
-            case 3:
-                return 0;
+        system("cls");
+        if (page == "menu") {
+            displayMainMenu(page, player);
+        } else if (page == "leaderboard") {
+            displayLeaderBoard(page);
+        } else if (page == "help") {
+            displayHelp(page);
+        } else if (page == "auth") {
+            displayAuthMenu(page);
+        } else if (page == "login") {
+            displayLoginForm(page, player);
+        } else if (page == "signup") {
+            displaySignupForm(page, player);
+        } else if (page == "after auth") {
+            displayAfterAuthMenu(page, player);
+        } else if (page == "level") {
+            displayLevelMenu(page, level, player.level);
+        } else if (page == "play") {
+            Play(level, player);
+            page = "level";
+        } else if (page == "quit") {
+            return 0;
         }
     }
 }

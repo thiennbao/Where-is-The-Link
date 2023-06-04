@@ -1,8 +1,4 @@
 
-struct coord {
-    int x, y;
-};
-
 string Ipath(char** map, coord start, coord end) {
     if (start.y == end.y) {
         // Horizontal

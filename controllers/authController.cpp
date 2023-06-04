@@ -1,88 +1,14 @@
 
-void AuthController(int &option, Player &player) {
+void displayAuthMenu(string &page) {
 
-    int authOption = 0;
+    GoTo(0, yStart - 4);
+    cout << "LOGIN TO SAVE YOUR PROGRESS";
+    string options[3] = {"LOGIN", "SIGN UP", "GUEST"};
 
-    if (strcmp(player.name, "") == 0) {
-
-        // Auth menu
-        while (true) {
-
-            system("cls");
-            displayAuthMenu(authOption);
-
-            if (authOption == 0) {
-                // Log in
-                system("cls");
-                loginForm(player);
-                if (strcmp(player.name, "") != 0) {
-                    option = 2;
-                    break;
-                }
-
-            } else if (authOption == 1) {
-                // Sign up
-                system("cls");
-                signupForm(player);
-                if (strcmp(player.name, "") != 0) {
-                    option = 2;
-                    break;
-                }
-                
-            } else if (authOption == 2) {
-                // Guest
-                option = 2;
-                break;
-
-            } else {
-                // Back to Main menu
-                option = 0;
-                break;
-                
-            }
-        }
-
-    } else {
-
-        // After auth menu
-        while (true) {
-
-            system("cls");
-            displayAfterAuthMenu(authOption);
-
-            if (authOption == 0) {
-                // Play
-                option = 2;
-                break;
-            } else if (authOption == 1) {
-                // Log out & Back to Main menu
-                logout(player);
-                option = 0;
-                break;
-            }  else {
-                // Back to Main menu
-                option = 0;
-                break;
-            }
-        }
-    }
-
-
-}
-
-void displayAuthMenu(int &option) {
-
-    char ch;
+    int option = 0;
     while (true) {
         
-        // Display the menu
-        ClearScreen();
-        // DrawLogo();
-
-        cout << "LOGIN TO SAVE YOUR PROGRESS";
-
-        int yStart = 12;
-        string options[3] = {"LOGIN", "SIGN UP", "GUEST"};
+        // Page
         for (int i=0; i<3; i++) {
             GoTo(0, yStart + 2*i);
             if (i == option) {
@@ -93,49 +19,43 @@ void displayAuthMenu(int &option) {
         }
 
         // Move
-        ch = getch();
+        char ch = getch();
         if (ch == keyUp || ch == 'w') {
             // Up
-            if (option == 0) {
-                option = 2;
-            } else {
-                option--;
-            }
+            option = (option == 0) ? 2 : option - 1;
         } else if (ch == keyDown || ch == 's') {
             // Down
-            if (option == 2) {
-                option = 0;
-            } else {
-                option++;
-            }
+            option = (option == 2) ? 0 : option + 1;
         } else if (ch == keyRight || ch == 'd' || ch == ' ' || ch == keyEnter) {
             // Next
+            if (option == 0) {
+                page = "login";
+            } else if (option == 1) {
+                page = "signup";
+            } else {
+                page = "level";
+            }
             break;
         } else if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
-            // Back
-            option = 3;
+            // Back to Main menu
+            page = "menu";
             break;
         }
     }
 }
 
-void loginForm(Player &player) {
+void displayLoginForm(string &page, Player &player) {
 
-    int option = 0;
+    GoTo(0, yStart - 4);
+    cout << "LOGIN";
+    string options[3] = {"NAME", "PASSWORD", "LOG IN"};
+
     string form[2];
-
-    char ch;
+    int option = 0;
     while (true) {
         
-        // Display the form
-        ClearScreen();
-        // DrawLogo();
-
-        cout << "LOGIN";
-
-        int yStart = 12;
-        string options[3] = {"NAME", "PASSWORD", "LOG IN"};
-        // Print options
+        // Page
+        // Print option
         for (int i=0; i<3; i++) {
             GoTo(0, yStart + 2*i);
             if (i == option) {
@@ -151,21 +71,13 @@ void loginForm(Player &player) {
         }
 
         // Move
-        ch = getch();
+        char ch = getch();
         if (ch == keyUp || ch == 'w') {
             // Up
-            if (option == 0) {
-                option = 2;
-            } else {
-                option--;
-            }
+            option = (option == 0) ? 2 : option - 1;
         } else if (ch == keyDown || ch == 's') {
             // Down
-            if (option == 2) {
-                option = 0;
-            } else {
-                option++;
-            }
+            option = (option == 2) ? 0 : option + 1;
         } else if (ch == keyRight || ch == 'd' || ch == ' ' || ch == keyEnter) {
             // Next
             if (option <= 1) {
@@ -177,37 +89,33 @@ void loginForm(Player &player) {
                 cout << ">> ";
                 getline(cin, form[option]);
                 form[option].resize(50);
-                system("cls");
             } else {
                 // Log in
                 login(player, form[0], form[1]);
+                page = (strcmp(player.name, "") != 0) ? "level" : "login";
                 break;
             }
         } else if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
             // Back to Auth menu
+            page = "auth";
             break;
         }
     }
 }
 
-void signupForm(Player &player) {
+void displaySignupForm(string &page, Player &player) {
 
+    GoTo(0, yStart - 4);
+    cout << "SIGN UP";
+    string options[4] = {"NAME", "PASSWORD", "CONFIRM PASSWORD", "SIGN UP"};
+
+    string form[3];
     int option = 0;
-    string form[2];
-
-    char ch;
     while (true) {
         
-        // Display the form
-        ClearScreen();
-        // DrawLogo();
-
-        cout << "SIGN UP";
-
-        int yStart = 12;
-        string options[3] = {"NAME", "PASSWORD", "SIGN UP"};
+        // Page
         // Print options
-        for (int i=0; i<3; i++) {
+        for (int i=0; i<4; i++) {
             GoTo(0, yStart + 2*i);
             if (i == option) {
                 cout << ">> " + options[i];
@@ -216,30 +124,22 @@ void signupForm(Player &player) {
             }
         }
         // Print user inputs
-        for (int i=0; i<2; i++) {
+        for (int i=0; i<3; i++) {
             GoTo(15, yStart + 2*i);
             cout << "   " << form[i];
         }
 
         // Move
-        ch = getch();
+        char ch = getch();
         if (ch == keyUp || ch == 'w') {
             // Up
-            if (option == 0) {
-                option = 2;
-            } else {
-                option--;
-            }
+            option = (option == 0) ? 3 : option - 1;
         } else if (ch == keyDown || ch == 's') {
             // Down
-            if (option == 2) {
-                option = 0;
-            } else {
-                option++;
-            }
+            option = (option == 3) ? 0 : option + 1;
         } else if (ch == keyRight || ch == 'd' || ch == ' ' || ch == keyEnter) {
             // Next
-            if (option <= 1) {
+            if (option <= 2) {
                 // Hide the previous input
                 GoTo(15, yStart + option*2);
                 cout << string(3 + form[option].size(), ' ');
@@ -248,32 +148,35 @@ void signupForm(Player &player) {
                 cout << ">> ";
                 getline(cin, form[option]);
                 form[option].resize(50);
-                system("cls");
             } else {
                 // Sign up
-                signup(player, form[0], form[1]);
+                if (form[1] == form[2]) {
+                    signup(player, form[0], form[1]);
+                    page = (strcmp(player.name, "") != 0) ? "level" : "signup";
+                } else {
+                    cout << "NOT MATCHED PASSWORD";
+                    page = "signup";
+                }
                 break;
             }
         } else if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
             // Back to Auth menu
+            page = "auth";
             break;
         }
     }
 }
 
-void displayAfterAuthMenu(int &option) {
+void displayAfterAuthMenu(string &page, Player &player) {
 
-    char ch;
+    GoTo(0, yStart - 4);
+    cout << "WELCOME";
+    string options[2] = {"PLAY", "LOG OUT"};
+
+    int option = 0;
     while (true) {
         
-        // Display the menu
-        ClearScreen();
-        // DrawLogo();
-
-        cout << "WELCOME";
-
-        int yStart = 12;
-        string options[2] = {"PLAY", "LOG OUT"};
+        // Page
         for (int i=0; i<2; i++) {
             GoTo(0, yStart + 2*i);
             if (i == option) {
@@ -284,27 +187,25 @@ void displayAfterAuthMenu(int &option) {
         }
 
         // Move
-        ch = getch();
+        char ch = getch();
         if (ch == keyUp || ch == 'w') {
             // Up
-            if (option == 0) {
-                option = 1;
-            } else {
-                option--;
-            }
+            option = (option == 0) ? 1 : option - 1;
         } else if (ch == keyDown || ch == 's') {
             // Down
-            if (option == 1) {
-                option = 0;
-            } else {
-                option++;
-            }
+            option = (option == 1) ? 0 : option + 1;
         } else if (ch == keyRight || ch == 'd' || ch == ' ' || ch == keyEnter) {
             // Next
+            if (option == 0) {
+                page = "level";
+            } else {
+                // log out here
+                logout(player);
+                page = "menu";
+            }
             break;
         } else if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
-            // Back
-            option = 2;
+            page = "menu";
             break;
         }
     }
