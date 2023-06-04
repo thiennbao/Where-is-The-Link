@@ -25,6 +25,7 @@ using namespace std;
 #include "console/console.cpp"
 #include "account/account.cpp"
 #include "game/matching.cpp"
+#include "game/interface.cpp"
 #include "game/level.cpp"
 #include "game/play.cpp"
 

@@ -53,47 +53,67 @@ char** generateMap(char saving[mapWidth*mapHeight]) {
     return map;
 }
 
-bool move(char** map, coord &cur, coord &start, coord &end) {
+char** generateBg(int level) {
+    char** bg = new char* [mapHeight*cellHeight];
+    for (int i=0; i<mapHeight*cellHeight; i++) {
+        bg[i] = new char [mapWidth*cellWidth + 1];
+    }
+
+    // ifstream ifs("resources/bg.txt");
+    // if (!ifs.is_open()) {
+    //     return bg;
+    // }
+
+    // for (int i=0; i<=level; i++) {
+    //     for (int j=0; j<mapHeight*cellHeight; j++) {
+    //         ifs >> bg[j];
+    //     }
+    // }
+
+    return bg;
+}
+
+bool act(char** map, char** background, coord &cur, coord &start, coord &end) {
     char ch = getch();
+
+    coord prev = cur;
     if (ch == keyRight || ch == 'd') {
-        if (cur.x == mapWidth - 2) {
-            cur.x = 1;
-        }  else {
-            cur.x ++;
-        }
+        // Move right
+        cur.x = (cur.x == mapWidth - 2) ? 1 : cur.x + 1;
+        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyLeft || ch == 'a') {
-        if (cur.x == 1) {
-            cur.x = mapWidth - 2;
-        } else {
-            cur.x --;
-        }
+        // Move left
+        cur.x = (cur.x == 1) ? mapWidth - 2 : cur.x - 1;
+        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyDown || ch == 's') {
-        if (cur.y == mapHeight - 2) {
-            cur.y = 1;
-        }  else {
-            cur.y ++;
-        }
+        // Move down
+        cur.y = (cur.y == mapHeight - 2) ? 1 : cur.y + 1;
+        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyUp || ch == 'w') {
-        if (cur.y == 1) {
-            cur.y = mapHeight - 2;
-        } else {
-            cur.y --;
-        }
+        // Move up
+        cur.y = (cur.y == 1) ? mapHeight - 2 : cur.y - 1;
+        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyEnter || ch == ' ') {
+        // Pick
         if (map[cur.y][cur.x] != ' ') {
             if (start.x == 0) {
                 start.x = cur.x;
                 start.y = cur.y;
+                _updateCell(prev, map[prev.y][prev.x], background, cur, start);
             } else {
                 end.x = cur.x;
                 end.y = cur.y;
             }
         }
-    } 
-    else if (ch == keyEsc) {
+    } else if (ch == keyEsc) {
+        // Issue here
         if (getch() == keyEsc) {
             system("cls");
-            SetColor(0, 7);
+            SetColor('M', 'O');
             GoTo(0, 12);
             cout << "Save a quit (A) - Continue (D)";
             while (true) {   
@@ -141,42 +161,58 @@ bool isImpossible(char** map) {
 void Play(int level, Player &player) {
     // Set up
     char** map = generateMap(player.saving[level].map);
+    char** background = generateBg(level);
     coord cur = {player.saving[level].x, player.saving[level].y}, start = {0, 0}, end = {0, 0};
     int score = player.saving[level].score, startTime = time(0);
 
+    // Level info
     GoTo(mapWidth*cellWidth, 4);
     cout << "Level: " << level+1;
     GoTo(mapWidth*cellWidth, 4);
     cout << "Player: " << (strcmp(player.name, "") == 0 ? "Guest" : player.name);
 
+    // Draw initial map
+    _drawMap(map);
+    _drawCell(cur, map[cur.y][cur.y], true, true);
+
     // Game loop
     while (true) {
-        ClearScreen();
 
-        SetColor(0, 7);
+        // Reset screen
+        ClearScreen();
+        SetColor('M', 'O');
         GoTo(mapWidth*cellWidth, 8);
         cout << "Score:     ";
         GoTo(mapWidth*cellWidth + 6, 8);
         cout << score - (time(0) - startTime) * 20;
 
-        if ((*Levels[level])(map, cur, start, end)) {
+        // Logic handle
+        Levels[level](map, background, cur, start, end);
 
-            score += 100;
+        // Reset picking
+        if (end.x != 0) {
+            _updateCell(start, map[start.y][start.x], background, cur, {0, 0});
+            start = end = {0, 0};
+        }
 
-            if (isOver(map)) {
-                break;
-            }
-
-            while (isImpossible(map)) {
-                for (int y=1; y<mapHeight-1; y++) {
-                    for (int x=1; x<mapWidth-1; x++) {
-                        swap(map[y][x], map[rand()%(mapHeight-2) + 1][rand()%(mapWidth-2) + 1]);
-                    }
+        // Checking map
+        if (isOver(map)) {
+            break;
+        }
+        while (isImpossible(map)) {
+            for (int y=1; y<mapHeight-1; y++) {
+                for (int x=1; x<mapWidth-1; x++) {
+                    coord randCoord = {rand()%(mapWidth-2) + 1, rand()%(mapHeight-2) + 1};
+                    swap(map[y][x], map[randCoord.y][randCoord.x]);
+                    _updateCell({x, y}, map[y][x], background, cur, start);
+                    _updateCell(randCoord, map[randCoord.y][randCoord.x], background, cur, start);
                 }
             }
         }
 
-        if (!move(map, cur, start, end)) {
+        // Player's action
+        bool isQuit = !act(map, background, cur, start, end);
+        if (isQuit) {
             // Saving
             player.saving[level].x = cur.x;
             player.saving[level].y = cur.y;
@@ -197,15 +233,18 @@ void Play(int level, Player &player) {
     }
 
     // After game
-    score -= (time(0) - startTime) * 20;
+    // Delete map
     for (int i=0; i<mapHeight; i++) {
         delete [] map[i];
     }
     delete [] map;
 
+    // Clear saving
     Saving empty;
     player.saving[level] = empty;
 
+    // Update record
+    score -= (time(0) - startTime) * 20;
     if (level == player.level && level < 3) {
         player.level ++;
     }
@@ -218,7 +257,7 @@ void Play(int level, Player &player) {
 
     // After game screen
     system("cls");
-    SetColor(0, 7);
+    SetColor('M', 'O');
     GoTo(0, 12);
     cout << "YOU WIN !!!";
     GoTo(0, 14);
