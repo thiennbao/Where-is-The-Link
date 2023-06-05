@@ -1,5 +1,4 @@
 #include "header.hpp"
-
 int main() {
 
     // Console settings

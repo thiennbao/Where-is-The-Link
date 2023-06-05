@@ -13,9 +13,9 @@
 #define keyEnter 13
 #define keyEsc 27
 
-#define mapWidth 6
-#define mapHeight 6
-#define charNum 4
+#define mapWidth 18
+#define mapHeight 10
+#define charNum 12
 #define cellWidth 5
 #define cellHeight 3
 

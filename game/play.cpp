@@ -59,16 +59,16 @@ char** generateBg(int level) {
         bg[i] = new char [mapWidth*cellWidth + 1];
     }
 
-    // ifstream ifs("resources/bg.txt");
-    // if (!ifs.is_open()) {
-    //     return bg;
-    // }
+    ifstream ifs("resources/bg.txt");
+    if (!ifs.is_open()) {
+        return bg;
+    }
 
-    // for (int i=0; i<=level; i++) {
-    //     for (int j=0; j<mapHeight*cellHeight; j++) {
-    //         ifs >> bg[j];
-    //     }
-    // }
+    for (int i=0; i<=level; i++) {
+        for (int j=0; j<mapHeight*cellHeight; j++) {
+            ifs >> bg[j];
+        }
+    }
 
     return bg;
 }
@@ -80,30 +80,30 @@ bool act(char** map, char** background, coord &cur, coord &start, coord &end) {
     if (ch == keyRight || ch == 'd') {
         // Move right
         cur.x = (cur.x == mapWidth - 2) ? 1 : cur.x + 1;
-        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
-        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
+        updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyLeft || ch == 'a') {
         // Move left
         cur.x = (cur.x == 1) ? mapWidth - 2 : cur.x - 1;
-        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
-        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
+        updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyDown || ch == 's') {
         // Move down
         cur.y = (cur.y == mapHeight - 2) ? 1 : cur.y + 1;
-        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
-        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
+        updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyUp || ch == 'w') {
         // Move up
         cur.y = (cur.y == 1) ? mapHeight - 2 : cur.y - 1;
-        _updateCell(prev, map[prev.y][prev.x], background, cur, start);
-        _updateCell(cur, map[cur.y][cur.x], background, cur, start);
+        updateCell(prev, map[prev.y][prev.x], background, cur, start);
+        updateCell(cur, map[cur.y][cur.x], background, cur, start);
     } else if (ch == keyEnter || ch == ' ') {
         // Pick
         if (map[cur.y][cur.x] != ' ') {
             if (start.x == 0) {
                 start.x = cur.x;
                 start.y = cur.y;
-                _updateCell(prev, map[prev.y][prev.x], background, cur, start);
+                updateCell(prev, map[prev.y][prev.x], background, cur, start);
             } else {
                 end.x = cur.x;
                 end.y = cur.y;
@@ -162,15 +162,14 @@ void Play(int level, Player &player) {
     coord cur = {player.saving[level].x, player.saving[level].y}, start = {0, 0}, end = {0, 0};
     int score = player.saving[level].score, startTime = time(0);
 
-    // Level info
+    // Print level info
     GoTo(mapWidth*cellWidth, 4);
     cout << "Level: " << level+1;
     GoTo(mapWidth*cellWidth, 4);
     cout << "Player: " << (strcmp(player.name, "") == 0 ? "Guest" : player.name);
 
     // Draw initial map
-    _drawMap(map);
-    _drawCell(cur, map[cur.y][cur.y], true, true);
+    drawMap(map, background, cur, start, level);
 
     // Game loop
     while (true) {
@@ -184,11 +183,11 @@ void Play(int level, Player &player) {
         cout << score - (time(0) - startTime) * 20;
 
         // Logic handle
-        Levels[level](map, background, cur, start, end);
+        Levels[level](map, background, cur, start, end, score);
 
         // Reset picking
         if (end.x != 0) {
-            _updateCell(start, map[start.y][start.x], background, cur, {0, 0});
+            updateCell(start, map[start.y][start.x], background, cur, {0, 0});
             start = end = {0, 0};
         }
 
@@ -201,8 +200,8 @@ void Play(int level, Player &player) {
                 for (int x=1; x<mapWidth-1; x++) {
                     coord randCoord = {rand()%(mapWidth-2) + 1, rand()%(mapHeight-2) + 1};
                     swap(map[y][x], map[randCoord.y][randCoord.x]);
-                    _updateCell({x, y}, map[y][x], background, cur, start);
-                    _updateCell(randCoord, map[randCoord.y][randCoord.x], background, cur, start);
+                    updateCell({x, y}, map[y][x], background, cur, start);
+                    updateCell(randCoord, map[randCoord.y][randCoord.x], background, cur, start);
                 }
             }
         }

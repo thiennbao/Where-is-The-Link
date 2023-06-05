@@ -1,5 +1,5 @@
 
-void _drawCell(coord co, char content, bool isDouble, bool isHightLight) {
+void drawCell(coord co, char content, bool isDouble, bool isHightLight) {
 
     char border[2][6] = {
         {char(218), char(191), char(192), char(217), char(196), char(179)}, // ┌ ┐ └ ┘ ─ │
@@ -7,7 +7,7 @@ void _drawCell(coord co, char content, bool isDouble, bool isHightLight) {
     };
 
     // Color
-    int textColor = isDouble ? (isHightLight ? 'P' : 'O') : content; //content - 65;
+    int textColor = isDouble ? (isHightLight ? 'P' : 'O') : content;
     SetColor('M', textColor);
 
     // Border top
@@ -26,7 +26,7 @@ void _drawCell(coord co, char content, bool isDouble, bool isHightLight) {
     cout << content;
 }
 
-void _drawBackground(coord co, char** background, bool isHightLight) {
+void drawBackground(coord co, char** background, bool isHightLight) {
 
     char border[2][6] = {
         {' ', ' ', ' ', ' ', ' ', ' '}, // No border
@@ -35,39 +35,39 @@ void _drawBackground(coord co, char** background, bool isHightLight) {
 
     // Border top
     GoTo(cellWidth*co.x, cellHeight*co.y);
-    SetColor('A', 'P'); // (co.x, co.y)
+    SetColor(background[cellHeight*co.y][cellWidth*co.x], 'P');
     cout << border[isHightLight][0];
     for (int x=1; x<cellWidth-1; x++) {
-        SetColor('A', 'P'); // (co.x + x, co.y)
+        SetColor(background[cellHeight*co.y][cellWidth*co.x + x], 'P');
         cout << border[isHightLight][4];
     }
-    SetColor('A', 'P'); // (co.x + cellWidth - 1, co.y)
+    SetColor(background[cellHeight*co.y][cellWidth*co.x + cellWidth - 1], 'P');
     cout << border[isHightLight][1];
     // Border left & right
     for (int y=1; y<cellHeight-1; y++) {
         GoTo(cellWidth*co.x, cellHeight*co.y + y);
-        SetColor('A', 'P'); // (co.x, co.y + y)
+        SetColor(background[cellHeight*co.y + y][cellWidth*co.x], 'P');
         cout << border[isHightLight][5];
         for (int x=1; x<cellWidth-1; x++) {
-            SetColor('A', 'P'); // (co.x + x, co.y + y)
+            SetColor(background[cellHeight*co.y + y][cellWidth*co.x + x], 'P');
             cout << " ";
         }
-        SetColor('A', 'P'); // (co.x + cellWidth - 1, co.y + y)
+        SetColor(background[cellHeight*co.y + y][cellWidth*co.x + cellWidth - 1], 'P');
         cout << border[isHightLight][5];
     }
     // Border bottom
     GoTo(cellWidth*co.x, cellHeight*co.y + cellHeight-1);
-    SetColor('A', 'P'); // (co.x, co.y + cellHeight - 1)
+    SetColor(background[cellHeight*co.y + cellHeight - 1][cellWidth*co.x], 'P');
     cout << border[isHightLight][2];
     for (int x=1; x<cellWidth-1; x++) {
-        SetColor('A', 'P'); // (co.x + x, co.y + cellHeight - 1)
+        SetColor(background[cellHeight*co.y + cellHeight - 1][cellWidth*co.x + x], 'P');
         cout << border[isHightLight][4];
     }
-    SetColor('A', 'P'); // (co.x + cellWidth - 1, co.y + cellHeight - 1)
+    SetColor(background[cellHeight*co.y + cellHeight - 1][cellWidth*co.x + cellWidth - 1], 'P');
     cout << border[isHightLight][3];
 }
 
-void _drawVoid(coord co) {
+void drawVoid(coord co) {
     SetColor('M', 'M');
     for (int y=0; y<cellHeight; y++) {
         GoTo(cellWidth*co.x, cellHeight*co.y + y);
@@ -75,21 +75,29 @@ void _drawVoid(coord co) {
     }
 }
 
-void _updateCell(coord co, char content, char** background, coord cur, coord pick) {
+void updateCell(coord co, char content, char** background, coord cur, coord pick) {
     bool isCur = co.x == cur.x && co.y == cur.y;
     bool isPicked = co.x == pick.x && co.y == pick.y;
 
     if (content != ' ') {
-        _drawCell(co, content, isPicked || isCur, isCur);
+        drawCell(co, content, isPicked || isCur, isCur);
     } else {
-        _drawBackground(co, background, isCur);
+        drawBackground(co, background, isCur);
     }
 }
 
-void _drawMap(char** map) {
-    for (int y=1; y<mapHeight-1; y++) {
-        for (int x=1; x<mapWidth-1; x++) {
-            _drawCell({x, y}, map[y][x], false, false);
+void drawMap(char** map, char** background, coord cur, coord start, int level) {
+    if (level == 3) {
+        for (int y=0; y<=cur.y+1; y++) {
+            for (int x=0; x<=cur.x+1; x++) {
+                updateCell({x, y}, map[y][x], background, cur, start);
+            }
+        }
+    } else {
+        for (int y=0; y<mapHeight; y++) {
+            for (int x=0; x<mapWidth; x++) {
+                updateCell({x, y}, map[y][x], background, cur, start);
+            }
         }
     }
 }
