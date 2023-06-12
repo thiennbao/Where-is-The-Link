@@ -1,16 +1,17 @@
 
 void displayAuthMenu(string &page) {
 
-    GoTo(0, yStart - 4);
-    cout << "LOGIN TO SAVE YOUR PROGRESS";
-    string options[3] = {"LOGIN", "SIGN UP", "GUEST"};
+    drawLogo();
+    GoTo(xStart, yStart - 3);
+    cout << "LOG IN TO SAVE YOUR PROGRESS";
+    string options[3] = {"LOG IN", "SIGN UP", "GUEST"};
 
     int option = 0;
     while (true) {
         
         // Page
         for (int i=0; i<3; i++) {
-            GoTo(0, yStart + 2*i);
+            GoTo(xStart, yStart + 2*i);
             if (i == option) {
                 cout << ">> " + options[i];
             } else {
@@ -46,8 +47,9 @@ void displayAuthMenu(string &page) {
 
 void displayLoginForm(string &page, Player &player) {
 
-    GoTo(0, yStart - 4);
-    cout << "LOGIN";
+    drawLogo();
+    GoTo(xStart, yStart - 3);
+    cout << "LOG IN";
     string options[3] = {"NAME", "PASSWORD", "LOG IN"};
 
     string form[2];
@@ -57,7 +59,7 @@ void displayLoginForm(string &page, Player &player) {
         // Page
         // Print option
         for (int i=0; i<3; i++) {
-            GoTo(0, yStart + 2*i);
+            GoTo(xStart, yStart + 2*i);
             if (i == option) {
                 cout << ">> " + options[i];
             } else {
@@ -66,7 +68,7 @@ void displayLoginForm(string &page, Player &player) {
         }
         // Print user inputs
         for (int i=0; i<2; i++) {
-            GoTo(15, yStart + 2*i);
+            GoTo(xStart + 15, yStart + 2*i);
             cout << "   " << form[i];
         }
 
@@ -82,10 +84,10 @@ void displayLoginForm(string &page, Player &player) {
             // Next
             if (option <= 1) {
                 // Hide the previous input
-                GoTo(15, yStart + option*2);
+                GoTo(xStart + 15, yStart + option*2);
                 cout << string(3 + form[option].size(), ' ');
                 // Fill the form
-                GoTo(15, yStart + option*2);
+                GoTo(xStart + 15, yStart + option*2);
                 cout << ">> ";
                 getline(cin, form[option]);
                 form[option].resize(50);
@@ -105,18 +107,19 @@ void displayLoginForm(string &page, Player &player) {
 
 void displaySignupForm(string &page, Player &player) {
 
-    GoTo(0, yStart - 4);
+    drawLogo();
+    GoTo(xStart, yStart - 3);
     cout << "SIGN UP";
-    string options[4] = {"NAME", "PASSWORD", "CONFIRM PASSWORD", "SIGN UP"};
+    string options[3] = {"NAME", "PASSWORD", "SIGN UP"};
 
-    string form[3];
+    string form[2];
     int option = 0;
     while (true) {
         
         // Page
         // Print options
-        for (int i=0; i<4; i++) {
-            GoTo(0, yStart + 2*i);
+        for (int i=0; i<3; i++) {
+            GoTo(xStart, yStart + 2*i);
             if (i == option) {
                 cout << ">> " + options[i];
             } else {
@@ -124,8 +127,8 @@ void displaySignupForm(string &page, Player &player) {
             }
         }
         // Print user inputs
-        for (int i=0; i<3; i++) {
-            GoTo(15, yStart + 2*i);
+        for (int i=0; i<2; i++) {
+            GoTo(xStart + 15 , yStart + 2*i);
             cout << "   " << form[i];
         }
 
@@ -139,24 +142,19 @@ void displaySignupForm(string &page, Player &player) {
             option = (option == 3) ? 0 : option + 1;
         } else if (ch == keyRight || ch == 'd' || ch == ' ' || ch == keyEnter) {
             // Next
-            if (option <= 2) {
+            if (option <= 1) {
                 // Hide the previous input
-                GoTo(15, yStart + option*2);
+                GoTo(xStart + 15, yStart + option*2);
                 cout << string(3 + form[option].size(), ' ');
                 // Fill the form
-                GoTo(15, yStart + option*2);
+                GoTo(xStart + 15, yStart + option*2);
                 cout << ">> ";
                 getline(cin, form[option]);
                 form[option].resize(50);
             } else {
                 // Sign up
-                if (form[1] == form[2]) {
-                    signup(player, form[0], form[1]);
-                    page = (strcmp(player.name, "") != 0) ? "level" : "signup";
-                } else {
-                    cout << "NOT MATCHED PASSWORD";
-                    page = "signup";
-                }
+                signup(player, form[0], form[1]);
+                page = (strcmp(player.name, "") != 0) ? "level" : "signup";
                 break;
             }
         } else if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
@@ -169,7 +167,8 @@ void displaySignupForm(string &page, Player &player) {
 
 void displayAfterAuthMenu(string &page, Player &player) {
 
-    GoTo(0, yStart - 4);
+    drawLogo();
+    GoTo(xStart, yStart - 3);
     cout << "WELCOME";
     string options[2] = {"PLAY", "LOG OUT"};
 
@@ -178,7 +177,7 @@ void displayAfterAuthMenu(string &page, Player &player) {
         
         // Page
         for (int i=0; i<2; i++) {
-            GoTo(0, yStart + 2*i);
+            GoTo(xStart, yStart + 2*i);
             if (i == option) {
                 cout << ">> " + options[i];
             } else {

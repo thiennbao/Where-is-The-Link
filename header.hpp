@@ -6,6 +6,11 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define windowWidth 120
+#define windowHeight 30
+#define xStart 20
+#define yStart 15
+
 #define keyUp 72
 #define keyDown 80
 #define keyLeft 75
@@ -19,10 +24,8 @@
 #define cellWidth 5
 #define cellHeight 3
 
-#define yStart 12
-
 using namespace std;
 
 #include "util/util.hpp"
-#include "game/game.hpp"
 #include "controllers/controllers.hpp"
+#include "game/game.hpp"

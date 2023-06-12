@@ -53,7 +53,7 @@ char** generateMap(char saving[mapWidth*mapHeight]) {
     return map;
 }
 
-char** generateBg(int level) {
+char** getBackground(int level) {
     char** bg = new char* [mapHeight*cellHeight];
     for (int i=0; i<mapHeight*cellHeight; i++) {
         bg[i] = new char [mapWidth*cellWidth + 1];
@@ -73,7 +73,7 @@ char** generateBg(int level) {
     return bg;
 }
 
-bool act(char** map, char** background, coord &cur, coord &start, coord &end) {
+void act(char** map, char** background, coord &cur, coord &start, coord &end, bool &isPause) {
     char ch = getch();
 
     coord prev = cur;
@@ -110,21 +110,8 @@ bool act(char** map, char** background, coord &cur, coord &start, coord &end) {
             }
         }
     } else if (ch == keyEsc) {
-        system("cls");
-        SetColor('M', 'O');
-        GoTo(0, 12);
-        cout << "Save a quit (A) - Continue (D)";
-        while (true) {   
-            ch = getch();
-            if (ch == keyRight || ch == 'd') {
-                system("cls");
-                return true;
-            } else if (ch == keyLeft || ch == 'a') {
-                return false;
-            }
-        }
+        isPause = true;
     }
-    return true;
 }
 
 bool isOver(char** map) {
@@ -155,12 +142,13 @@ bool isImpossible(char** map) {
     return true;
 }
 
-void Play(int level, Player &player) {
+void Play(string &page, int &level, Player &player) {
     // Set up
     char** map = generateMap(player.saving[level].map);
-    char** background = generateBg(level);
+    char** background = getBackground(level);
     coord cur = {player.saving[level].x, player.saving[level].y}, start = {0, 0}, end = {0, 0};
     int score = player.saving[level].score, startTime = time(0);
+    bool isPause = false;
 
     // Print level info
     GoTo(mapWidth*cellWidth, 4);
@@ -175,7 +163,7 @@ void Play(int level, Player &player) {
     while (true) {
 
         // Reset screen
-        GoTo(0, 0);
+        GoTo(xStart, 0);
         SetColor('M', 'O');
         GoTo(mapWidth*cellWidth, 8);
         cout << "Score:     ";
@@ -207,24 +195,37 @@ void Play(int level, Player &player) {
         }
 
         // Player's action
-        bool isQuit = !act(map, background, cur, start, end);
-        if (isQuit) {
-            // Saving
-            player.saving[level].x = cur.x;
-            player.saving[level].y = cur.y;
-            player.saving[level].score = score - (time(0) - startTime) * 20;
-            for (int y=0; y<mapHeight; y++) {
-                for (int x=0; x<mapWidth; x++) {
-                    player.saving[level].map[y*mapWidth + x] = map[y][x];
+        act(map, background, cur, start, end, isPause);
+        if (isPause) {
+            int pauseTime = time(0);
+            system("cls");
+            SetColor('M', 'O');
+            bool isQuit;
+            displayPauseScreen(isQuit);
+            if (isQuit) {
+                // Save and quit
+                player.saving[level].x = cur.x;
+                player.saving[level].y = cur.y;
+                player.saving[level].score = score - (time(0) - startTime) * 20;
+                for (int y=0; y<mapHeight; y++) {
+                    for (int x=0; x<mapWidth; x++) {
+                        player.saving[level].map[y*mapWidth + x] = map[y][x];
+                    }
                 }
-            }
-            update(player, level);
+                update(player, level);
 
-            for (int i=0; i<mapHeight; i++) {
-                delete [] map[i];
+                for (int i=0; i<mapHeight; i++) {
+                    delete [] map[i];
+                }
+                delete [] map;
+                page = "level";
+                return;
+            } else {
+                system("cls");
+                drawMap(map, background, cur, start, level);
+                isPause = false;
+                startTime += time(0) - pauseTime;
             }
-            delete [] map;
-            return;
         };
     }
 
@@ -252,33 +253,21 @@ void Play(int level, Player &player) {
     }
 
     // After game screen
-    system("cls");
     SetColor('M', 'O');
-    GoTo(0, 12);
+    system("cls");
+    GoTo(xStart, yStart - 3);
     cout << "YOU WIN !!!";
-    GoTo(0, 14);
+    GoTo(xStart, yStart);
     cout << "Your score in this level: " << score;
-    GoTo(0, 16);
+    GoTo(xStart, yStart + 2);
     cout << "Your best score in this level: " << player.score[level];
-    GoTo(0, 18);
+    GoTo(xStart, yStart + 4);
     cout << "Your total score: " << player.score[0] + player.score[1] + player.score[2] + player.score[3];
 
-    GoTo(0, 20);
-    cout << "Back to Level Menu (A) - Play again (Space) - Next level (D)";
-    while (true) {
-        char ch = getch();
-        if (ch == keyRight || ch == 'd') {
-            system("cls");
-            if (level < 3) {
-                Play(level+1, player);
-            }
-            break;
-        } else if (ch == ' ') {
-            system("cls");
-            Play(level, player);
-            break;
-        } else if (ch == keyLeft || ch == 'a') {
-            break;
-        }
-    }
+    GoTo(xStart, yStart + 7);
+    cout << "Press any key to continue...";
+    getch();
+
+    system("cls");
+    displayAfterGameScreen(page, level);
 }

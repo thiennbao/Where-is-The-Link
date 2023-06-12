@@ -1,9 +1,6 @@
 
 void ShowCur(bool CursorVisibility) {
-    CONSOLE_CURSOR_INFO ConCurInf;
-    ConCurInf.dwSize = 10;
-    ConCurInf.bVisible = CursorVisibility;
-
+    CONSOLE_CURSOR_INFO ConCurInf = {10, CursorVisibility};
     SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &ConCurInf);
 }
 
@@ -14,14 +11,10 @@ void SetColor(char background_color, char text_color) {
         0, 8, 7, 15 // M - N - O - P Black, Gray, White, Bright White   
     };
     int color_code = colorCode[background_color - 65] * 16 + colorCode[text_color - 65];
-
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color_code);
 }
 
 void GoTo(SHORT posX, SHORT posY) {
-    COORD Position;
-    Position.X = posX;
-    Position.Y = posY;
-
+    COORD Position = {posX, posY};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Position);
 }

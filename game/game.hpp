@@ -5,6 +5,6 @@ struct coord {
 
 // Code
 #include "matching.cpp"
-#include "interface.cpp"
+#include "drawing.cpp"
 #include "level.cpp"
 #include "play.cpp"

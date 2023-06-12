@@ -4,6 +4,7 @@
 bool Normal(char** map, char** background, coord cur, coord start, coord end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start, background);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
         updateCell(start, map[start.y][start.x], background, cur, start);
@@ -14,6 +15,7 @@ bool Normal(char** map, char** background, coord cur, coord start, coord end, in
 bool Falldown(char** map, char** background, coord cur, coord start, coord end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start, background);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
         if (start.y > end.y) {
@@ -35,6 +37,7 @@ bool Falldown(char** map, char** background, coord cur, coord start, coord end, 
 bool Messup(char** map, char** background, coord cur, coord start, coord end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start, background);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
         for (int y=1; y<mapHeight-1; y++) {
@@ -51,9 +54,11 @@ bool Messup(char** map, char** background, coord cur, coord start, coord end, in
 bool Dark(char** map, char** background, coord cur, coord start, coord end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
+        drawPath(path, start, background);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
     }
+    drawVoid(start);
     for (int y=cur.y-2; y<=cur.y+2; y++) {
         for (int x=cur.x-2; x<=cur.x+2; x++) {
             coord co = {

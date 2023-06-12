@@ -119,6 +119,33 @@ void update(Player player, int level) {
         }
     }
 
+    // Sort
+    for (int i=1; i<playerNum; i++) {
+
+        Player curPlayer = playerList[i];
+
+        int playerScore = 0;
+        for (int lv=0; lv<4; lv++) {
+            playerScore += curPlayer.score[lv];
+        }
+
+        int j;
+        for (j=i; j>0; j--) {
+            int prevPlayerScore = 0;
+            for (int lv=0; lv<4; lv++) {
+                prevPlayerScore += playerList[j-1].score[lv];
+            }
+
+            if (prevPlayerScore < playerScore) {
+                playerList[j] = playerList[j-1]; 
+            } else {
+                break;
+            }
+        }
+
+        playerList[j] = curPlayer;
+    }
+
     // Write to file
     ofstream ofs("resources/player.dat", ios::binary);
     for (int i=0; i<playerNum; i++) {

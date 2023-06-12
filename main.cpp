@@ -18,6 +18,8 @@ int main() {
             displayLeaderBoard(page);
         } else if (page == "help") {
             displayHelp(page);
+        } else if (page == "quit") {
+            displayQuitConfirm(page);
         } else if (page == "auth") {
             displayAuthMenu(page);
         } else if (page == "login") {
@@ -29,9 +31,8 @@ int main() {
         } else if (page == "level") {
             displayLevelMenu(page, level, player.level);
         } else if (page == "play") {
-            Play(level, player);
-            page = "level";
-        } else if (page == "quit") {
+            Play(page, level, player);
+        } else if (page == "exit") {
             return 0;
         }
     }
