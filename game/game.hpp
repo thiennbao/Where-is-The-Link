@@ -1,4 +1,9 @@
 
+struct LevelInfo {
+    char levelContext[400];
+    char levelFeature[400];
+};
+
 struct coord {
     int x, y;
 };

@@ -49,7 +49,7 @@ void displayLeaderBoard(string &page) {
     GoTo(xStart, yStart - 3);
     cout << "LEADER BOARD";
 
-    ifstream ifs("resources/player.dat", ios::binary);
+    ifstream ifs("assets/player.dat", ios::binary);
     if (ifs.is_open()) {
         Player topPlayer;
         for (int i=0; i<5; i++) {
@@ -97,7 +97,7 @@ void displayHelp(string &page) {
     GoTo(xStart, yStart + 5);
     cout << "Picking: Space or Enter";
     GoTo(xStart, yStart + 7);
-    cout << "Go back: Esc";
+    cout << "Going back: Esc";
 
     while (true) {
         char ch = getch();

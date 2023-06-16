@@ -1,21 +1,26 @@
 
 // Level's feature
 
-bool Normal(char** map, char** background, coord cur, coord start, coord end, int &score) {
+bool Normal(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
-        drawPath(path, start, background);
+        drawPath(path, start, background, false);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
         updateCell(start, map[start.y][start.x], background, cur, start);
         updateCell(end, map[end.y][end.x], background, cur, start);
     }
+    // Reset picking
+    if (end.x != 0) {
+        updateCell(start, map[start.y][start.x], background, cur, {0, 0});
+        start = end = {0, 0};
+    }
 }
 
-bool Falldown(char** map, char** background, coord cur, coord start, coord end, int &score) {
+bool Falldown(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
-        drawPath(path, start, background);
+        drawPath(path, start, background, false);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
         if (start.y > end.y) {
@@ -32,12 +37,17 @@ bool Falldown(char** map, char** background, coord cur, coord start, coord end, 
             updateCell({end.x, y}, map[y][end.x], background, cur, start);
         }
     }
+    // Reset picking
+    if (end.x != 0) {
+        updateCell(start, map[start.y][start.x], background, cur, {0, 0});
+        start = end = {0, 0};
+    }
 }
 
-bool Messup(char** map, char** background, coord cur, coord start, coord end, int &score) {
+bool Messup(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
-        drawPath(path, start, background);
+        drawPath(path, start, background, false);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
         for (int y=1; y<mapHeight-1; y++) {
@@ -49,16 +59,26 @@ bool Messup(char** map, char** background, coord cur, coord start, coord end, in
             }
         }
     }
+    // Reset picking
+    if (end.x != 0) {
+        updateCell(start, map[start.y][start.x], background, cur, {0, 0});
+        start = end = {0, 0};
+    }
 }
 
-bool Dark(char** map, char** background, coord cur, coord start, coord end, int &score) {
+bool Dark(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
-        drawPath(path, start, background);
+        drawPath(path, start, background, true);
         score += 100;
         map[start.y][start.x] = map[end.y][end.x] = ' ';
     }
-    drawVoid(start);
+    // Reset picking
+    if (end.x != 0) {
+        drawVoid(start);
+        start = end = {0, 0};
+    }
+    // Update 5x5 cells arround
     for (int y=cur.y-2; y<=cur.y+2; y++) {
         for (int x=cur.x-2; x<=cur.x+2; x++) {
             coord co = {
@@ -74,4 +94,4 @@ bool Dark(char** map, char** background, coord cur, coord start, coord end, int 
     }
 }
 
-bool (*Levels[4])(char** map, char** background, coord cur, coord start, coord end, int &score) = {&Normal, &Falldown, &Messup, &Dark};
+bool (*Levels[4])(char** map, char** background, coord cur, coord &start, coord &end, int &score) = {&Normal, &Falldown, &Messup, &Dark};

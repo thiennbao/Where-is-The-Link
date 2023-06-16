@@ -84,7 +84,7 @@ void displayAfterGameScreen(string &page, int &level) {
     drawLogo();
     GoTo(xStart, yStart - 3);
     cout << "YOU WIN !!!";
-    string options[3] = {"BACK TO LEVEL MENU", "PLAY AGAIN", "NEXT LEVEL"};
+    string options[3] = {"NEXT LEVEL", "PLAY AGAIN", "BACK TO LEVEL MENU"};
 
     int option = 0;
     while (true) {
@@ -110,16 +110,12 @@ void displayAfterGameScreen(string &page, int &level) {
         } else if (ch == keyRight || ch == 'd' || ch == ' ' || ch == keyEnter) {
             // Next
             if (option == 0) {
-                page = "level";
+                level++;
+                page = "play";
             } else if (option == 1) {
                 page = "play";
             } else {
-                if (level == 3) {
-                    page = "level";
-                } else {
-                    level++;
-                    page = "play";
-                }
+                page = "level";
             }
             break;
         }

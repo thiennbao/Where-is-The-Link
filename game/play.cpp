@@ -59,7 +59,7 @@ char** getBackground(int level) {
         bg[i] = new char [mapWidth*cellWidth + 1];
     }
 
-    ifstream ifs("resources/bg.txt");
+    ifstream ifs("assets/bg.txt");
     if (!ifs.is_open()) {
         return bg;
     }
@@ -71,6 +71,38 @@ char** getBackground(int level) {
     }
 
     return bg;
+}
+
+void showLevelContext(int level) {
+    ifstream ifs("assets/levelInfo.dat", ios::binary);
+    if (ifs.is_open()) {
+        LevelInfo lvInfo;
+        ifs.seekg(sizeof(LevelInfo) * level, ios::beg);
+        ifs.read((char *) &lvInfo, sizeof(LevelInfo));
+
+        int line = 1, i = 0;
+        GoTo(xStart, 5);
+        while (lvInfo.levelContext[i] != '\0') {
+            if (lvInfo.levelContext[i] == '\n') {
+                GoTo(xStart, 5 + line);
+                line ++;
+            } else {
+                cout << lvInfo.levelContext[i];
+                Sleep(20);
+            }
+            i ++;
+        }
+
+        GoTo(xStart, 5 + line + 2);
+        cout << lvInfo.levelFeature;
+        Sleep(1000);
+        GoTo(xStart, 5 + line + 4);
+        cout << "Press any key to continue...";
+        while(kbhit()) getch();
+        getch();
+
+        system("cls");
+    }
 }
 
 void act(char** map, char** background, coord &cur, coord &start, coord &end, bool &isPause) {
@@ -143,6 +175,9 @@ bool isImpossible(char** map) {
 }
 
 void Play(string &page, int &level, Player &player) {
+
+    showLevelContext(level);
+
     // Set up
     char** map = generateMap(player.saving[level].map);
     char** background = getBackground(level);
@@ -153,7 +188,7 @@ void Play(string &page, int &level, Player &player) {
     // Print level info
     GoTo(mapWidth*cellWidth, 4);
     cout << "Level: " << level+1;
-    GoTo(mapWidth*cellWidth, 4);
+    GoTo(mapWidth*cellWidth, 6);
     cout << "Player: " << (strcmp(player.name, "") == 0 ? "Guest" : player.name);
 
     // Draw initial map
@@ -172,12 +207,6 @@ void Play(string &page, int &level, Player &player) {
 
         // Logic handle
         Levels[level](map, background, cur, start, end, score);
-
-        // Reset picking
-        if (end.x != 0) {
-            updateCell(start, map[start.y][start.x], background, cur, {0, 0});
-            start = end = {0, 0};
-        }
 
         // Checking map
         if (isOver(map)) {
@@ -266,8 +295,30 @@ void Play(string &page, int &level, Player &player) {
 
     GoTo(xStart, yStart + 7);
     cout << "Press any key to continue...";
+    while(kbhit()) getch();
     getch();
-
     system("cls");
-    displayAfterGameScreen(page, level);
+
+    if (level == 3) {
+        // End game outro
+        showLevelContext(4);
+
+        char** qr = getBackground(4);
+        for (int y=0; y<mapHeight; y++) {
+            for (int x=1; x<mapWidth-1; x++) {
+                updateCell({x, y}, ' ', qr, {0, 0}, {0, 0});
+            }
+        }
+        SetColor('M', 'O');
+        GoTo(mapWidth*cellWidth - 8, 4);
+        cout << "No rickroll trust me";
+        GoTo(mapWidth*cellWidth - 8, 8);
+        cout << "Press any key to continue...";
+        getch();
+        system("cls");
+
+        page = "level";
+    } else {
+        displayAfterGameScreen(page, level);
+    }
 }

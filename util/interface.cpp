@@ -1,6 +1,6 @@
 
 void drawLogo() {
-    ifstream ifs("resources/logo.txt");
+    ifstream ifs("assets/logo.txt");
     if (ifs.is_open()) {
         string str;
         int y = 1;

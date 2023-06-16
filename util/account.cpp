@@ -14,7 +14,7 @@ struct Player {
 
 void login(Player &player, string name, string pass) {
 
-    ifstream ifs("resources/player.dat", ios::binary);
+    ifstream ifs("assets/player.dat", ios::binary);
     if (!ifs.is_open()) {
         return;
     }
@@ -47,7 +47,7 @@ void login(Player &player, string name, string pass) {
 
 void signup(Player &player, string name, string pass) {
 
-    ifstream ifs("resources/player.dat", ios::binary);
+    ifstream ifs("assets/player.dat", ios::binary);
     if (!ifs.is_open()) {
         return;
     }
@@ -70,7 +70,7 @@ void signup(Player &player, string name, string pass) {
     strcpy(newPlayer.name, name.c_str());
     strcpy(newPlayer.pass, pass.c_str());
 
-    ofstream ofs("resources/player.dat", ios::binary | ios::app);
+    ofstream ofs("assets/player.dat", ios::binary | ios::app);
     ofs.write((char*) &newPlayer, sizeof(Player));
     ofs.close();
 
@@ -84,7 +84,7 @@ void logout(Player &player) {
 
 void update(Player player, int level) {
 
-    ifstream ifs("resources/player.dat", ios::binary);
+    ifstream ifs("assets/player.dat", ios::binary);
     if (!ifs.is_open()) {
         return;
     }
@@ -147,7 +147,7 @@ void update(Player player, int level) {
     }
 
     // Write to file
-    ofstream ofs("resources/player.dat", ios::binary);
+    ofstream ofs("assets/player.dat", ios::binary);
     for (int i=0; i<playerNum; i++) {
         ofs.write((char *) &playerList[i], sizeof(Player));
     }

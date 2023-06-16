@@ -102,7 +102,7 @@ void drawMap(char** map, char** background, coord cur, coord start, int level) {
     }
 }
 
-void drawLine(char cur, char next, coord &start, char** background, bool isDraw) {
+void drawLine(char cur, char next, coord &start, char** background, bool isDraw, bool woBackground) {
     char line[2][6] = {
         {' ', ' ', ' ', ' ', ' ', ' '}, // For clearing
         {char(218), char(191), char(192), char(217), char(196), char(179)}, // ┌ ┐ └ ┘ ─ │
@@ -115,7 +115,7 @@ void drawLine(char cur, char next, coord &start, char** background, bool isDraw)
             // Left if A and vice versa
             start.x += (cur == 'a' ? -1 : 1);
             GoTo(start.x, start.y);
-            SetColor(background[start.y][start.x], 'P');
+            SetColor(woBackground ? 'M' : background[start.y][start.x], 'P');
             cout << line[isDraw][4];
         }
         start.x += (cur == 'a' ? -1 : 1);
@@ -125,14 +125,14 @@ void drawLine(char cur, char next, coord &start, char** background, bool isDraw)
             // Up if W and vice versa
             start.y += (cur == 'w' ? -1 : 1);
             GoTo(start.x, start.y);
-            SetColor(background[start.y][start.x], 'P');
+            SetColor(woBackground ? 'M' : background[start.y][start.x], 'P');
             cout << line[isDraw][5];
         }
         start.y += (cur == 'w' ? -1 : 1);
     }
     // Last char
     GoTo(start.x, start.y);
-    SetColor(background[start.y][start.x], 'P');
+    SetColor(woBackground ? 'M' : background[start.y][start.x], 'P');
     if (cur == next) {
         // Line
         if (cur == 'a' || cur == 'd') {
@@ -154,18 +154,18 @@ void drawLine(char cur, char next, coord &start, char** background, bool isDraw)
     }
 }
 
-void drawPath(string path, coord start, char** background) {
+void drawPath(string path, coord start, char** background, bool woBackground) {
     coord co;
     // Draw
     co = {start.x*cellWidth + cellWidth/2, start.y*cellHeight + cellHeight/2};
     for (int i=0; i<path.size(); i++) {
-        drawLine(path[i], path[i+1], co, background, true);
+        drawLine(path[i], path[i+1], co, background, true, woBackground);
     }
     // Wait
     Sleep(100);
     // Clear
     co = {start.x*cellWidth + cellWidth/2, start.y*cellHeight + cellHeight/2};
     for (int i=0; i<path.size(); i++) {
-        drawLine(path[i], path[i+1], co, background, false);
+        drawLine(path[i], path[i+1], co, background, false, woBackground);
     }
 }
