@@ -57,6 +57,7 @@ void displayLeaderBoard(string &page) {
             if (ifs.eof()) {
                 break;
             }
+            mask(topPlayer.name, topPlayer.mask);
             string name = string(topPlayer.name);
             name.resize(52, '.');
             int score = 0;

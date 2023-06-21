@@ -54,23 +54,21 @@ char** generateMap(char saving[mapWidth*mapHeight]) {
 }
 
 char** getBackground(int level) {
-    char** bg = new char* [mapHeight*cellHeight];
+    char** background = new char* [mapHeight*cellHeight];
     for (int i=0; i<mapHeight*cellHeight; i++) {
-        bg[i] = new char [mapWidth*cellWidth + 1];
+        background[i] = new char [mapWidth*cellWidth + 1];
     }
 
-    ifstream ifs("assets/bg.txt");
-    if (!ifs.is_open()) {
-        return bg;
-    }
-
-    for (int i=0; i<=level; i++) {
-        for (int j=0; j<mapHeight*cellHeight; j++) {
-            ifs >> bg[j];
+    ifstream ifs("assets/background.dat");
+    if (ifs.is_open()) {
+        ifs.seekg(mapWidth*cellWidth*mapHeight*cellHeight*level, ios::beg);
+        for (int i=0; i<mapHeight*cellHeight; i++) {
+            ifs.read(background[i], 90);
+            mask(background[i]);
         }
     }
 
-    return bg;
+    return background;
 }
 
 void showLevelContext(int level) {
@@ -79,6 +77,8 @@ void showLevelContext(int level) {
         LevelInfo lvInfo;
         ifs.seekg(sizeof(LevelInfo) * level, ios::beg);
         ifs.read((char *) &lvInfo, sizeof(LevelInfo));
+        mask(lvInfo.levelContext);
+        mask(lvInfo.levelFeature);
 
         int line = 1, i = 0;
         GoTo(xStart, 5);
@@ -284,6 +284,7 @@ void Play(string &page, int &level, Player &player) {
     // After game screen
     SetColor('M', 'O');
     system("cls");
+    drawLogo();
     GoTo(xStart, yStart - 3);
     cout << "YOU WIN !!!";
     GoTo(xStart, yStart);

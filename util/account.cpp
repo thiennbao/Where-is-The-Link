@@ -4,6 +4,7 @@ struct Saving {
     char map[mapWidth*mapHeight] = "";
 };
 struct Player {
+    char mask = 0;
     char name[50] = "";
     char pass[50] = "";
 
@@ -23,14 +24,17 @@ void login(Player &player, string name, string pass) {
     while (!ifs.eof()) {
         ifs.read((char*) &checkPlayer, sizeof(Player));
         // Check if player exists
+        mask(checkPlayer.name, checkPlayer.mask);
         if (strcmp(name.c_str(), checkPlayer.name) == 0) {
 
             // Check password
+            mask(checkPlayer.pass, checkPlayer.mask);
             if ((strcmp(pass.c_str(), checkPlayer.pass) == 0)) {
                 // Success
                 player = checkPlayer;
             } else {
                 // Fail
+                GoTo(xStart, yStart + 8);
                 cout << "Wrong password !!!";
                 getch();
             }
@@ -41,6 +45,7 @@ void login(Player &player, string name, string pass) {
     }
 
     ifs.close();
+    GoTo(xStart, yStart + 8);
     cout << "Player does not exist !!!";
     getch();
 }
@@ -56,7 +61,9 @@ void signup(Player &player, string name, string pass) {
     Player checkPlayer;
     while (!ifs.eof()) {
         ifs.read((char*) &checkPlayer, sizeof(Player));
+        mask(checkPlayer.name, checkPlayer.mask);
         if (strcmp(name.c_str(), checkPlayer.name) == 0) {
+            GoTo(xStart, yStart + 8);
             cout << "This player already exists !!!";
             getch();
             ifs.close();
@@ -67,8 +74,12 @@ void signup(Player &player, string name, string pass) {
 
     // Add player
     Player newPlayer;
+    srand(time(0));
+    newPlayer.mask = 128 + rand()%128;
     strcpy(newPlayer.name, name.c_str());
+    mask(newPlayer.name, newPlayer.mask);
     strcpy(newPlayer.pass, pass.c_str());
+    mask(newPlayer.pass, newPlayer.mask);
 
     ofstream ofs("assets/player.dat", ios::binary | ios::app);
     ofs.write((char*) &newPlayer, sizeof(Player));
@@ -101,6 +112,7 @@ void update(Player player, int level) {
 
     // Update
     for (int i=0; i<playerNum; i++) {
+        mask(playerList[i].name, playerList[i].mask);
         if (strcmp(player.name, playerList[i].name) == 0) {
             // Saving
             playerList[i].saving[level] = player.saving[level];
@@ -115,8 +127,10 @@ void update(Player player, int level) {
                     }
                 }
             }
+            mask(playerList[i].name, playerList[i].mask);
             break;
         }
+        mask(playerList[i].name, playerList[i].mask);
     }
 
     // Sort

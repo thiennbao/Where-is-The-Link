@@ -1,12 +1,22 @@
+void mask(char str[], char mask = char(255)) {
+    int i = 0;
+    while (str[i] != '\0') {
+        str[i] ^= mask;
+        i++;
+    }
+}
 
 void drawLogo() {
-    ifstream ifs("assets/logo.txt");
+    GoTo(0, 2);
+    ifstream ifs("assets/logo.dat", ios::binary);
     if (ifs.is_open()) {
-        string str;
-        int y = 1;
+        char str[121];
         while (!ifs.eof()) {
-            getline(ifs, str);
-            GoTo(windowWidth/2 - str.length()/2, ++y);
+            ifs.read(str, 121);
+            if (ifs.eof()) {
+                return;
+            }
+            mask(str);
             cout << str << endl;
         }
     }

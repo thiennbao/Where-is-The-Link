@@ -93,9 +93,11 @@ void displayLoginForm(string &page, Player &player) {
                 form[option].resize(50);
             } else {
                 // Log in
-                login(player, form[0], form[1]);
-                page = (strcmp(player.name, "") != 0) ? "level" : "login";
-                break;
+                if (form[0] != "" && form[1] != "") {
+                    login(player, form[0], form[1]);
+                    page = (strcmp(player.name, "") != 0) ? "level" : "login";
+                    break;
+                }
             }
         } else if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
             // Back to Auth menu
@@ -153,9 +155,11 @@ void displaySignupForm(string &page, Player &player) {
                 form[option].resize(50);
             } else {
                 // Sign up
-                signup(player, form[0], form[1]);
-                page = (strcmp(player.name, "") != 0) ? "level" : "signup";
-                break;
+                if (form[0] != "" && form[1] != "") {
+                    signup(player, form[0], form[1]);
+                    page = (strcmp(player.name, "") != 0) ? "level" : "signup";
+                    break;
+                }
             }
         } else if (ch == keyLeft || ch == 'a' || ch == keyEsc) {
             // Back to Auth menu
