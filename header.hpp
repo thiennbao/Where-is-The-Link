@@ -26,6 +26,6 @@
 
 using namespace std;
 
-#include "util/util.hpp"
+#include "utils/util.hpp"
 #include "controllers/controllers.hpp"
 #include "game/game.hpp"

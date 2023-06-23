@@ -92,7 +92,7 @@ void displayHelp(string &page) {
     GoTo(xStart, yStart);
     cout << "- Your task is to match 2 cells in the same character to remove them within 3 lines";
     GoTo(xStart, yStart + 1);
-    cout << "- You score 100 point per 2 cells and lose 20 point per 1 second passed";
+    cout << "- You score 100 points per 2 cells and lose 20 points per 1 second passed";
     GoTo(xStart, yStart + 3);
     cout << "Moving: WASD or Arrow key";
     GoTo(xStart, yStart + 5);
