@@ -61,14 +61,27 @@ char** getBackground(int level) {
 
     ifstream ifs("assets/background.dat");
     if (ifs.is_open()) {
-        ifs.seekg(mapWidth*cellWidth*mapHeight*cellHeight*level, ios::beg);
+        ifs.seekg((mapWidth*cellWidth+1)*mapHeight*cellHeight*level, ios::beg);
         for (int i=0; i<mapHeight*cellHeight; i++) {
-            ifs.read(background[i], 90);
+            ifs.read(background[i], mapWidth*cellWidth + 1);
             mask(background[i]);
         }
     }
 
     return background;
+}
+
+void clearLevel(char** map, char** background) {
+    // Clear map
+    for (int i=0; i<mapHeight; i++) {
+        delete [] map[i];
+    }
+    delete [] map;
+    // Clear background
+    for (int i=0; i<mapHeight*cellHeight; i++) {
+        delete [] background[i];
+    }
+    delete [] background;
 }
 
 void showLevelContext(int level) {
@@ -243,10 +256,7 @@ void Play(string &page, int &level, Player &player) {
                 }
                 update(player, level);
 
-                for (int i=0; i<mapHeight; i++) {
-                    delete [] map[i];
-                }
-                delete [] map;
+                clearLevel(map, background);
                 page = "level";
                 return;
             } else {
@@ -260,10 +270,7 @@ void Play(string &page, int &level, Player &player) {
 
     // After game
     // Delete map
-    for (int i=0; i<mapHeight; i++) {
-        delete [] map[i];
-    }
-    delete [] map;
+    clearLevel(map, background);
 
     // Clear saving
     Saving empty;

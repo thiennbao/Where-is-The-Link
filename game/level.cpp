@@ -1,7 +1,7 @@
 
 // Level's feature
 
-bool Normal(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
+void Normal(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
         drawPath(path, start, background, false);
@@ -17,7 +17,7 @@ bool Normal(char** map, char** background, coord cur, coord &start, coord &end, 
     }
 }
 
-bool Falldown(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
+void Falldown(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
         drawPath(path, start, background, false);
@@ -44,7 +44,7 @@ bool Falldown(char** map, char** background, coord cur, coord &start, coord &end
     }
 }
 
-bool Messup(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
+void Messup(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
         drawPath(path, start, background, false);
@@ -66,7 +66,7 @@ bool Messup(char** map, char** background, coord cur, coord &start, coord &end, 
     }
 }
 
-bool Dark(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
+void Dark(char** map, char** background, coord cur, coord &start, coord &end, int &score) {
     string path = findPath(map, start, end);
     if (path != "") {
         drawPath(path, start, background, true);
@@ -94,4 +94,4 @@ bool Dark(char** map, char** background, coord cur, coord &start, coord &end, in
     }
 }
 
-bool (*Levels[4])(char** map, char** background, coord cur, coord &start, coord &end, int &score) = {&Normal, &Falldown, &Messup, &Dark};
+void (*Levels[4])(char** map, char** background, coord cur, coord &start, coord &end, int &score) = {&Normal, &Falldown, &Messup, &Dark};
